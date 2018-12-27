@@ -1,8 +1,8 @@
-# Journey #
+# Album #
 
 ## Description ##
 
-A small journey report generation tool.
+A simply album webpage generation tool.
 
 ## Requirements ##
 
@@ -19,7 +19,7 @@ The configuration file `config.json` controls the following:
 
 * `gmPath`: Path of GraphicsMagick executable file. Default value is the default installation path of GraphicsMagick on Windows.
 
-To run Journey:
+Run:
 
     node index.js <input-dir>
 
@@ -29,16 +29,16 @@ Command arguments:
 
 The following will be created in the specified directory:
 
-* `index.html`: The journey report as an HTML document for further editing.
+* `index.html`: The generated webpage.
 * `thumbnails`: The directory contains thumbnails of the photos. Each photo is resized so that the image dimension is 1280 pixels (width) by 720 pixels (height) at maximum.
 
 ## Examples ##
 
-Assume there is directory `/path/to/travel-20170101` contains photos in JPEG format with EXIF data:
+Assume there is directory `/path/to/album-20170101` contains photos in JPEG format with EXIF data:
 
-    node index.js /path/to/travel-20170101
+    node index.js /path/to/album-20170101
 
-The generated journey report `index.html` and thumbnails directory `thumbnails` can be found in the directory.
+The generated webpage `index.html` and thumbnails directory `thumbnails` can be found in the directory.
 
 ## License ##
 
