@@ -16,9 +16,9 @@
     <h2>
       ARTICLE_HEADER
     </h2>
+    <p>{{currentTimestamp}}.</p>
     <p>
-      Written at {{currentTimestamp}}. Unless otherwise specified, the photo
-      timestamps are all in local time.
+      Unless otherwise specified, the photo timestamps are all in local time.
     </p>
     <p>
       BRIEF_DESCRIPTION
@@ -28,7 +28,7 @@
       <img
         src="thumbnails/{{filename}}"
         alt="{{altText}}" />
-      <p>Captured at {{timestamp}} at LOCATION.</p>
+      <p>{{timestamp}} at LOCATION.</p>
       <p>DESCRIPTION</p>
     </div>
     {{/photos}}
