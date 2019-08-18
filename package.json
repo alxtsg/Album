@@ -1,7 +1,7 @@
 {
   "name": "album",
-  "version": "0.0.1",
-  "description": "A simply album webpage generation tool.",
+  "version": "0.0.2",
+  "description": "Static album page generation tool.",
   "main": "index.js",
   "dependencies": {
     "fast-exif": "^1.0.1",

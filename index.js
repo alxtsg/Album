@@ -1,4 +1,17 @@
+/**
+ * Static album page generation tool.
+ *
+ * @author Alex TSANG <alextsang@live.com>
+ *
+ * @license BSD-3-Clause
+ */
+
 'use strict';
+
+/**
+ * @typedef {import('./type-def').Config} Config
+ * @typedef {import('./type-def').Photo} Photo
+ */
 
 const exif = require('fast-exif');
 const mustache = require('mustache');
@@ -15,59 +28,51 @@ const templatePath = path.join(
   __dirname,
   'template.mustache'
 );
-const exitCode = {
-  incorrectArguments: 1
-};
 
-const defaultModificationTime = '0001-01-01T00:00:00';
-
-let inputDirectory = null;
-let thumbnailsDirectory = null;
-let generatedPagePath = null;
-let gmPath = null;
-let photos = null;
+const EXPECTED_ARG_LENGTH = 3;
+const DEFAULT_MOD_TIME = '0001-01-01T00:00:00';
 
 /**
  * Prints program usage.
  */
-function usage() {
+const usage = () => {
   const scriptPath = process.argv[1];
   console.error(`Usage: node ${scriptPath} <input-dir>`);
-}
+};
 
 /**
- * Checks if the given directory is valid.
+ * Checks if the given path is a directory.
  *
- * @param {String} directory Directory path.
+ * @param {string} directory Directory path.
  *
- * @returns {Promise} Resolves successfully, or rejects with an Error object.
+ * @returns {Promise<boolean>} Resolves with a boolean value which indicates
+ *                             whether the path is a directory, or rejects with
+ *                             an Error.
  */
-function checkDirectory(directory) {
+const isDirectory = (directory) => {
   return new Promise((resolve, reject) => {
     fs.stat(directory, (error, stats) => {
       if (error !== null) {
         reject(error);
         return;
       }
-      if (!stats.isDirectory()) {
-        const errorMessage = `${directory} is not a directory.`;
-        reject(new Error(errorMessage));
-        return;
-      }
-      resolve();
+      resolve(stats.isDirectory());
     });
   });
-}
+};
 
 /**
- * Gets configurations, including the path of GraphicsMagick.
+ * Gets file content.
  *
- * @returns {Promise} Resolves successfully, or rejects with an Error object.
+ * @param {string} file File path.
+ *
+ * @returns {Promise<string>} Resolves with the file content, or rejects with an
+ *                            Error.
  */
-function getConfigurations() {
+const getFileContent = (file) => {
   return new Promise((resolve, reject) => {
     fs.readFile(
-      configFile,
+      file,
       {
         encoding: 'utf8'
       },
@@ -76,129 +81,120 @@ function getConfigurations() {
           reject(error);
           return;
         }
-        try {
-          const config = JSON.parse(data);
-          if (!config.gmPath) {
-            reject(new Error('Path of GraphicsMagick is unspecified'));
-            return;
-          }
-          gmPath = config.gmPath;
-          resolve();
-        } catch (parseError) {
-          reject(parseError);
-        }
-      });
+        resolve(data);
+      }
+    );
   });
-}
+};
+
+/**
+ * Writes file content.
+ *
+ * @param {string} file Destination file path.
+ * @param {string} content File content.
+ *
+ * @returns {Promise} Resolves without a value, or rejects with an Error.
+ */
+const writeFile = (file, content) => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(file, content, (error) => {
+      if (error !== null) {
+        reject(error);
+        return;
+      }
+      resolve();
+    });
+  });
+};
+
+/**
+ * Gets configurations.
+ *
+ * @async
+ *
+ * @param {string} configFile Configurations file path.
+ *
+ * @returns {Config} Configurations.
+ *
+ * @throws {Error} When unable to read and parse the configurations file.
+ */
+const getConfigurations = async (configFile) => {
+  try {
+    const content = await getFileContent(configFile);
+    const config = JSON.parse(content);
+    if (!config.gmPath) {
+      throw new Error('Path of GraphicsMagick is undefined.');
+    }
+    return {
+      gmPath: config.gmPath
+    };
+  } catch (error) {
+    throw error;
+  }
+};
 
 /**
  * Gets filenames of photos from the given directory.
  *
- * The photos array is initialized with objects which each contains the filename
- * and the absolute path of the photo.
- *
- * @returns {Promise} Resolves successfully, or rejects with an Error object.
+ * @returns {Promise<Photo[]>} Resolves with an array of photo data, or rejects
+ *                             with an Error object.
  */
-function getPhotos() {
+const getPhotos = (directory) => {
   return new Promise((resolve, reject) => {
-    fs.readdir(inputDirectory, (error, filenames) => {
+    fs.readdir(directory, (error, filenames) => {
       if (error !== null) {
         reject(error);
         return;
       }
-      photos = [];
-      filenames.forEach((filename) => {
-        photos.push({
-          filename: filename,
-          path: path.join(inputDirectory, filename)
-        });
-      });
-      resolve();
+      resolve(filenames.map((filename) => {
+        return {
+          filename,
+          path: path.join(directory, filename)
+        };
+      }));
     });
   });
-}
+};
 
 /**
- * Gets modification time of the photo.
+ * Sets modification time of a photo.
  *
- * The modification time of each photo is added to the objects in the photos
- * array. The modification time is represented in ISO 8601 format up to seconds
- * part.
+ * If the modification time cannot be retrieved, the default timestamp
+ * 0001-01-01T00:00:00 will be set.
  *
- * The timezone part is not included in the modification time.
+ * @param {Photo} Photo Photo data.
  *
- * If the modification time of a photo cannot be retrieved, the photo is
- * assumed being modified at 0001-01-01T00:00:00.
- *
- * @param {String} photoPath Path of the photo.
- *
- * @returns {Promise} Resolves successfully, or rejects with an Error object.
+ * @returns {Promise} Resolves without a value, or rejects with an Error.
  */
-function getPhotoModificationTime(photoPath) {
-  return new Promise((resolve, reject) => {
-    exif.read(photoPath)
-      .then((metadata) => {
-        let modificationTime = null;
-        if (!metadata) {
-          console.warn(`No metadata in ${photoPath}.`);
-          modificationTime = defaultModificationTime;
-        } else if (!metadata.exif) {
-          console.warn(`No EXIF data in ${photoPath}.`);
-          modificationTime = defaultModificationTime;
-        } else if (!metadata.exif.DateTimeOriginal) {
-          console.warn(`Cannot find modification time in ${photoPath}.`);
-          modificationTime = defaultModificationTime;
-        } else {
-          modificationTime = metadata.exif.DateTimeOriginal.toISOString();
-          modificationTime = modificationTime.substring(
-            0,
-            modificationTime.indexOf('.')
-          );
-        }
-        for (let i = 0; i < photos.length; i += 1) {
-          const photo = photos[i];
-          if (photo.path === photoPath) {
-            photo.modificationTime = modificationTime;
-            break;
-          }
-        }
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-}
-
-/**
- * Gets photos' modification time.
- *
- * @returns {Promise} Resolves successfully, or rejects with an Error object.
- */
-function getPhotosModificationTime() {
-  return new Promise((resolve, reject) => {
-    const promises = [];
-    photos.forEach((photo) => {
-      promises.push(getPhotoModificationTime(photo.path));
-    });
-    Promise.all(promises)
-      .then(() => {
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-}
+const setPhotoModTime = async (photo) => {
+  const metadata = await exif.read(photo.path);
+  if (!metadata) {
+    photo.modTime = DEFAULT_MOD_TIME;
+    return;
+  }
+  if (!metadata.exif) {
+    photo.modTime = DEFAULT_MOD_TIME;
+    return;
+  }
+  if (!metadata.exif.DateTimeOriginal) {
+    photo.modTime = DEFAULT_MOD_TIME;
+    return;
+  }
+  let timestamp = metadata.exif.DateTimeOriginal.toISOString();
+  timestamp = timestamp.substring(0, timestamp.indexOf('.'));
+  photo.modTime = timestamp;
+};
 
 /**
  * Creates thumbnails directory.
  *
- * @returns {Promise} Resolves successfully, or rejects with an Error object.
+ * @param {string} directory Path of thumbnails directory.
+ *
+ * @returns {Promise} Resolves without a value, or rejects with an Error object.
  */
-function createThumbnailsDirectory() {
+const createThumbnailsDirectory = (directory) =>{
   return new Promise((resolve, reject) => {
-    fs.mkdir(thumbnailsDirectory, (error) => {
+    fs.mkdir(directory, (error) => {
       if (error !== null) {
         reject(error);
         return;
@@ -206,33 +202,36 @@ function createThumbnailsDirectory() {
       resolve();
     });
   });
-}
+};
 
 /**
- * Resizes photos in batch using GraphicsMagick.
+ * Resizes photos in batch.
  *
- * @returns {Promise} Resolves with success, or rejects with an Error object.
+ * @param {Config} config Program configurations.
+ * @param {Photo[]} photos An array of photo data.
+ * @param {string} thumbnailsDirectory Thumbnails directory.
+ *
+ * @returns {Promise} Resolves without a value, or rejects with an Error object.
  */
-function batchResize() {
+const batchResize = (config, photos, thumbnailsDirectory) => {
   return new Promise((resolve, reject) => {
     const commandArguments = [
       'batch',
       '-'
     ];
-    const gm = childProcess.spawn(gmPath, commandArguments);
+    const gm = childProcess.spawn(config.gmPath, commandArguments);
     gm.on('error', (error) => {
       reject(error);
       gm.kill();
     });
     gm.on('close', (code) => {
       if (code !== 0) {
-        reject(new Error(`GraphicsMagick exit with code ${code}`));
+        reject(new Error(`GraphicsMagick exit with code ${code}.`));
         return;
       }
       resolve();
     });
-    const batchCommands = [];
-    photos.forEach((photo) => {
+    const batchCommands = photos.map((photo) => {
       const thumbnailPath = path.join(thumbnailsDirectory, photo.filename);
       const command = [
         'convert',
@@ -245,70 +244,70 @@ function batchResize() {
         thumbnailPath,
         '\n'
       ].join(' ');
-      batchCommands.push(command);
+      return command;
     });
     gm.stdin.write(batchCommands.join(''));
     gm.stdin.end();
   });
-}
+};
 
 /**
  * Generates a page (HTML document) using the photos.
  *
- * @returns {Promise} Resolves successfully, or rejects with an Error object.
+ * @async
+ *
+ * @param {string} template Page template path.
+ * @param {Photo[]} photos An array of photo data.
+ * @param {string} page Generated path path.
+ *
+ * @returns {Promise} Resolves without a value, or rejects with an Error object.
  */
-function generatePage() {
-  return new Promise((resolve, reject) => {
-    fs.readFile(
-      templatePath,
-      {
-        encoding: 'utf8'
-      },
-      (readTemplateError, template) => {
-        if (readTemplateError !== null) {
-          reject(readTemplateError);
-          return;
-        }
-        const view = {
-          currentTimestamp: (new Date()).toISOString(),
-          photos: []
+const generatePage = async (template, photos, page) => {
+  try {
+    const templateContent = await getFileContent(template);
+    const view = {
+      currentTimestamp: (new Date()).toISOString(),
+      photos: photos.map((photo) => {
+        return {
+          filename: photo.filename,
+          altText: `Photo captured at ${photo.modTime}.`,
+          timestamp: photo.modTime
         };
-        photos.forEach((photo) => {
-          view.photos.push({
-            filename: photo.filename,
-            altText: `Photo captured at ${photo.modificationTime}.`,
-            timestamp: photo.modificationTime
-          });
-        });
-        const generatedContent = mustache.render(template, view);
-        fs.writeFile(generatedPagePath, generatedContent, (writePageError) => {
-          if (writePageError !== null) {
-            reject(writePageError);
-            return;
-          }
-          resolve();
-        });
-      });
-  });
-}
+      })
+    };
+    const generatedContent = mustache.render(templateContent, view);
+    await writeFile(page, generatedContent);
+  } catch (error) {
+    throw error;
+  }
+};
 
-if (process.argv.length !== 3) {
-  usage();
-  process.exit(exitCode.incorrectArguments);
-} else {
-  inputDirectory = process.argv[2];
-  thumbnailsDirectory = path.join(inputDirectory, 'thumbnails');
-  generatedPagePath = path.join(inputDirectory, 'index.html');
-}
+const main = async () => {
+  if (process.argv.length !== EXPECTED_ARG_LENGTH) {
+    usage();
+    return;
+  }
+  const inputDirectory = process.argv[2];
+  try {
+    const isValidDirectory = await isDirectory(inputDirectory)
+    if (!isValidDirectory) {
+      console.error(`${inputDirectory} is not a directory.`);
+      return;
+    }
+    const config = await getConfigurations(configFile);
+    const photos = await getPhotos(inputDirectory);
+    const tasks = photos.map((photo) => {
+      return setPhotoModTime(photo);
+    });
+    await Promise.all(tasks);
+    const thumbnailsDirectory = path.join(inputDirectory, 'thumbnails');
+    await createThumbnailsDirectory(thumbnailsDirectory);
+    await batchResize(config, photos, thumbnailsDirectory);
+    const generatedPagePath = path.join(inputDirectory, 'index.html');
+    await generatePage(templatePath, photos, generatedPagePath);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
 
-Promise.resolve(inputDirectory)
-  .then(checkDirectory)
-  .then(getConfigurations)
-  .then(getPhotos)
-  .then(getPhotosModificationTime)
-  .then(createThumbnailsDirectory)
-  .then(batchResize)
-  .then(generatePage)
-  .catch((error) => {
-    console.error(error);
-  });
+main();

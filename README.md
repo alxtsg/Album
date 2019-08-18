@@ -2,11 +2,11 @@
 
 ## Description ##
 
-A simply album webpage generation tool.
+Static album page generation tool.
 
 ## Requirements ##
 
-* Node.js (`>=6.11.0`).
+* Node.js (`>=10.16.3`).
 * GraphicsMagick (`>=1.3.33`).
 
 ## Installation ##
@@ -17,7 +17,8 @@ A simply album webpage generation tool.
 
 The configuration file `config.json` controls the following:
 
-* `gmPath`: Path of GraphicsMagick executable file. Default value is the default installation path of GraphicsMagick on Windows.
+* `gmPath`: Path of GraphicsMagick executable file. Default value is the default
+            installation path of GraphicsMagick on Windows.
 
 Run:
 
@@ -30,15 +31,19 @@ Command arguments:
 The following will be created in the specified directory:
 
 * `index.html`: The generated webpage.
-* `thumbnails`: The directory contains thumbnails of the photos. Each photo is resized so that the image dimension is 1280 pixels (width) by 720 pixels (height) at maximum.
+* `thumbnails`: The directory contains thumbnails of the photos. Each photo is
+                resized so that the image dimension is 1280 pixels (width) by
+                720 pixels (height) at maximum.
 
 ## Examples ##
 
-Assume there is directory `/path/to/album-20170101` contains photos in JPEG format with EXIF data:
+Assume there is directory `/path/to/album-20170101` contains photos in JPEG
+format with EXIF data:
 
     node index.js /path/to/album-20170101
 
-The generated webpage `index.html` and thumbnails directory `thumbnails` can be found in the directory.
+The generated webpage `index.html` and thumbnails directory `thumbnails` can be
+found in the directory.
 
 ## License ##
 
