@@ -7,7 +7,7 @@ A simply album webpage generation tool.
 ## Requirements ##
 
 * Node.js (`>=6.11.0`).
-* GraphicsMagick (`>=1.3.25`).
+* GraphicsMagick (`>=1.3.33`).
 
 ## Installation ##
 
