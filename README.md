@@ -15,10 +15,14 @@ Static album page generation tool.
 
 ## Usage ##
 
-The configuration file `config.json` controls the following:
+Create a configuration file with the name `.env`. The configuration file
+controls the following:
 
-* `gmPath`: Path of GraphicsMagick executable file. Default value is the default
-            installation path of GraphicsMagick on Windows.
+* `GM_PATH`: Path of GraphicsMagick executable file.
+* `MAX_WIDTH`: Maximum width (in pixels) of each generated thumbnail.
+* `MAX_HEIGHT`: Maximum height (in pixels) of each generated thumbnail.
+
+An example `.env.template` is provided as a reference.
 
 Run:
 
@@ -32,8 +36,7 @@ The following will be created in the specified directory:
 
 * `index.html`: The generated webpage.
 * `thumbnails`: The directory contains thumbnails of the photos. Each photo is
-                resized so that the image dimension is 1280 pixels (width) by
-                720 pixels (height) at maximum.
+                resized if it is larger than the specified size.
 
 ## Examples ##
 

@@ -19,10 +19,8 @@ const childProcess = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const configFile = path.join(
-  __dirname,
-  'config.json'
-);
+const config = require('./config');
+
 const templatePath = path.join(
   __dirname,
   'template.mustache'
@@ -106,32 +104,6 @@ const writeFile = (file, content) => {
       resolve();
     });
   });
-};
-
-/**
- * Gets configurations.
- *
- * @async
- *
- * @param {string} configFile Configurations file path.
- *
- * @returns {Config} Configurations.
- *
- * @throws {Error} When unable to read and parse the configurations file.
- */
-const getConfigurations = async (configFile) => {
-  try {
-    const content = await getFileContent(configFile);
-    const config = JSON.parse(content);
-    if (!config.gmPath) {
-      throw new Error('Path of GraphicsMagick is undefined.');
-    }
-    return {
-      gmPath: config.gmPath
-    };
-  } catch (error) {
-    throw error;
-  }
 };
 
 /**
@@ -326,7 +298,6 @@ const main = async () => {
       console.error(`${inputDirectory} is not a directory.`);
       return;
     }
-    const config = await getConfigurations(configFile);
     const photos = await getPhotos(inputDirectory);
     const tasks = photos.map((photo) => {
       return setPhotoModTime(config, photo);

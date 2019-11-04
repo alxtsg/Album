@@ -1,9 +1,10 @@
 {
   "name": "album",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Static album page generation tool.",
   "main": "index.js",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "mustache": "^3.1.0"
   },
   "repository": {
