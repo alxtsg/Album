@@ -13,7 +13,6 @@
  * @typedef {import('./type-def').Photo} Photo
  */
 
-const exif = require('fast-exif');
 const mustache = require('mustache');
 
 const childProcess = require('child_process');
@@ -30,6 +29,8 @@ const templatePath = path.join(
 );
 
 const EXPECTED_ARG_LENGTH = 3;
+const NORMAL_EXIT_CODE = 0;
+const MOD_TIME_REGEX = /(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
 const DEFAULT_MOD_TIME = '0001-01-01T00:00:00';
 
 /**
@@ -162,27 +163,59 @@ const getPhotos = (directory) => {
  * If the modification time cannot be retrieved, the default timestamp
  * 0001-01-01T00:00:00 will be set.
  *
- * @param {Photo} Photo Photo data.
+ * @param {Config} config Configurations.
+ * @param {Photo} photo Photo data.
  *
  * @returns {Promise} Resolves without a value, or rejects with an Error.
  */
-const setPhotoModTime = async (photo) => {
-  const metadata = await exif.read(photo.path);
-  if (!metadata) {
-    photo.modTime = DEFAULT_MOD_TIME;
-    return;
-  }
-  if (!metadata.exif) {
-    photo.modTime = DEFAULT_MOD_TIME;
-    return;
-  }
-  if (!metadata.exif.DateTimeOriginal) {
-    photo.modTime = DEFAULT_MOD_TIME;
-    return;
-  }
-  let timestamp = metadata.exif.DateTimeOriginal.toISOString();
-  timestamp = timestamp.substring(0, timestamp.indexOf('.'));
-  photo.modTime = timestamp;
+const setPhotoModTime = async (config, photo) => {
+  const commandArguments = [
+    'identify',
+    '-format',
+    "'%[EXIF:DateTimeOriginal]'",
+    photo.path
+  ];
+  return new Promise((resolve, reject) => {
+    const gm = childProcess.spawn(config.gmPath, commandArguments);
+    let output = '';
+    gm.stdout.on('data', (data) => {
+      output += data;
+    });
+    gm.stderr.on('data', (data) => {
+      console.error(data);
+    });
+    gm.on('error', (error) => {
+      reject(error);
+      return;
+    });
+    gm.on('close', (code) => {
+      if (code !== NORMAL_EXIT_CODE) {
+        reject(new Error(`GraphicsMagick exited with code ${code}.`));
+        return;
+      }
+      // The expected format of extracted modification time reported by
+      // GraphicsMagick is:
+      // YYYY:MM:DD HH:mm:ss
+      if (!MOD_TIME_REGEX.test(output)) {
+        photo.modTime = DEFAULT_MOD_TIME;
+        resolve();
+        return;
+      }
+      const [
+        timestamp,
+        year,
+        month,
+        dayOfMonth,
+        hour,
+        minute,
+        second
+      ] = output.match(MOD_TIME_REGEX);
+      const datePart = `${year}-${month}-${dayOfMonth}`;
+      const timePart = `${hour}:${minute}:${second}`
+      photo.modTime = `${datePart}T${timePart}`;
+      resolve();
+    });
+  });
 };
 
 /**
@@ -296,7 +329,7 @@ const main = async () => {
     const config = await getConfigurations(configFile);
     const photos = await getPhotos(inputDirectory);
     const tasks = photos.map((photo) => {
-      return setPhotoModTime(photo);
+      return setPhotoModTime(config, photo);
     });
     await Promise.all(tasks);
     const thumbnailsDirectory = path.join(inputDirectory, 'thumbnails');
