@@ -192,7 +192,7 @@ const setPhotoModTime = async (photo) => {
  *
  * @returns {Promise} Resolves without a value, or rejects with an Error object.
  */
-const createThumbnailsDirectory = (directory) =>{
+const createThumbnailsDirectory = (directory) => {
   return new Promise((resolve, reject) => {
     fs.mkdir(directory, (error) => {
       if (error !== null) {
