@@ -238,8 +238,7 @@ const batchResize = (config, photos, thumbnailsDirectory) => {
         '-auto-orient',
         '-geometry',
         '1280x720>',
-        '+profile',
-        '"*"',
+        '-strip',
         photo.path,
         thumbnailPath,
         '\n'
