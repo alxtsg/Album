@@ -10,7 +10,6 @@
 
 /**
  * @typedef {import('./type-def').Config} Config
- * @typedef {import('./type-def').Photo} Photo
  */
 
 const mustache = require('mustache');
@@ -21,10 +20,7 @@ const path = require('path');
 
 const config = require('./config');
 
-const templatePath = path.join(
-  __dirname,
-  'template.mustache'
-);
+const TEMPLATE_PATH = path.join(__dirname, 'template.mustache');
 
 const EXPECTED_ARG_LENGTH = 3;
 const NORMAL_EXIT_CODE = 0;
@@ -34,7 +30,7 @@ const DEFAULT_MOD_TIME = '0001-01-01T00:00:00';
 /**
  * Prints program usage.
  */
-const usage = () => {
+const printUsage = () => {
   const scriptPath = process.argv[1];
   console.error(`Usage: node ${scriptPath} <input-dir>`);
 };
@@ -44,9 +40,9 @@ const usage = () => {
  *
  * @param {string} directory Directory path.
  *
- * @returns {Promise<boolean>} Resolves with a boolean value which indicates
- *                             whether the path is a directory, or rejects with
- *                             an Error.
+ * @returns {Promise<boolean>} A Promise resolved with a boolean value which
+ *                             indicates whether the path is a directory, or a
+ *                             Promise rejected with an Error.
  */
 const isDirectory = (directory) => {
   return new Promise((resolve, reject) => {
@@ -65,8 +61,8 @@ const isDirectory = (directory) => {
  *
  * @param {string} file File path.
  *
- * @returns {Promise<string>} Resolves with the file content, or rejects with an
- *                            Error.
+ * @returns {Promise<string>} A Promise resolved with the file content, or a
+ *                            Promise rejected with an Error.
  */
 const getFileContent = (file) => {
   return new Promise((resolve, reject) => {
@@ -92,7 +88,8 @@ const getFileContent = (file) => {
  * @param {string} file Destination file path.
  * @param {string} content File content.
  *
- * @returns {Promise} Resolves without a value, or rejects with an Error.
+ * @returns {Promise} A Promise resolved without a value, ora Promise rejected
+ *                    with an Error.
  */
 const writeFile = (file, content) => {
   return new Promise((resolve, reject) => {
@@ -107,48 +104,45 @@ const writeFile = (file, content) => {
 };
 
 /**
- * Gets filenames of photos from the given directory.
+ * Gets filenames of photos.
  *
- * @returns {Promise<Photo[]>} Resolves with an array of photo data, or rejects
- *                             with an Error object.
+ * @param {string} directory Directory path.
+ *
+ * @returns {Promise<string[]>} A Promise resolved with an array of filenames of
+ *                              photos in the directory, or a Promise rejected
+ *                              with an Error.
  */
-const getPhotos = (directory) => {
+const getPhotoFilenames = (directory) => {
   return new Promise((resolve, reject) => {
     fs.readdir(directory, (error, filenames) => {
       if (error !== null) {
         reject(error);
         return;
       }
-      resolve(filenames.map((filename) => {
-        return {
-          filename,
-          path: path.join(directory, filename)
-        };
-      }));
+      resolve(filenames);
     });
   });
 };
 
 /**
- * Sets modification time of a photo.
+ * Gets modification time of a photo.
  *
- * If the modification time cannot be retrieved, the default timestamp
- * 0001-01-01T00:00:00 will be set.
+ * @param {string} gmPath Path of the GraphicsMagick executable.
+ * @param {string} photoPath Absolute path of the photo.
  *
- * @param {Config} config Configurations.
- * @param {Photo} photo Photo data.
- *
- * @returns {Promise} Resolves without a value, or rejects with an Error.
+ * @returns {Promise<string>} A Promise resolved with the modification time, in
+ *                            ISO 8601, of the photo, or a Promise rejected with
+ *                            an Error.
  */
-const setPhotoModTime = async (config, photo) => {
+const getModTime = (gmPath, photoPath) => {
   const commandArguments = [
     'identify',
     '-format',
     "'%[EXIF:DateTimeOriginal]'",
-    photo.path
+    photoPath
   ];
   return new Promise((resolve, reject) => {
-    const gm = childProcess.spawn(config.gmPath, commandArguments);
+    const gm = childProcess.spawn(gmPath, commandArguments);
     let output = '';
     gm.stdout.on('data', (data) => {
       output += data;
@@ -156,11 +150,11 @@ const setPhotoModTime = async (config, photo) => {
     gm.stderr.on('data', (data) => {
       console.error(data);
     });
-    gm.on('error', (error) => {
+    gm.once('error', (error) => {
       reject(error);
       return;
     });
-    gm.on('close', (code) => {
+    gm.once('close', (code) => {
       if (code !== NORMAL_EXIT_CODE) {
         reject(new Error(`GraphicsMagick exited with code ${code}.`));
         return;
@@ -169,8 +163,7 @@ const setPhotoModTime = async (config, photo) => {
       // GraphicsMagick is:
       // YYYY:MM:DD HH:mm:ss
       if (!MOD_TIME_REGEX.test(output)) {
-        photo.modTime = DEFAULT_MOD_TIME;
-        resolve();
+        resolve(DEFAULT_MOD_TIME);
         return;
       }
       const [
@@ -184,8 +177,7 @@ const setPhotoModTime = async (config, photo) => {
       ] = output.match(MOD_TIME_REGEX);
       const datePart = `${year}-${month}-${dayOfMonth}`;
       const timePart = `${hour}:${minute}:${second}`
-      photo.modTime = `${datePart}T${timePart}`;
-      resolve();
+      resolve(`${datePart}T${timePart}`);
     });
   });
 };
@@ -193,9 +185,10 @@ const setPhotoModTime = async (config, photo) => {
 /**
  * Creates thumbnails directory.
  *
- * @param {string} directory Path of thumbnails directory.
+ * @param {string} directory Absolute path of the thumnails directory.
  *
- * @returns {Promise} Resolves without a value, or rejects with an Error object.
+ * @returns {Promise} A Promise resolved without a value, or a Promise rejected
+ *                    with an Error.
  */
 const createThumbnailsDirectory = (directory) => {
   return new Promise((resolve, reject) => {
@@ -210,41 +203,44 @@ const createThumbnailsDirectory = (directory) => {
 };
 
 /**
- * Resizes photos in batch.
+ * Resizes photos in a batch.
  *
- * @param {Config} config Program configurations.
- * @param {Photo[]} photos An array of photo data.
- * @param {string} thumbnailsDirectory Thumbnails directory.
+ * @param {Config} config Configuration.
+ * @param {string} inputDir Absolute path of the input directory.
+ * @param {string[]} filenames Filenames of photos.
+ * @param {string} thumbnailsDir Absolute path of the thumbnails directory.
  *
- * @returns {Promise} Resolves without a value, or rejects with an Error object.
+ * @returns {Promise<void>} A Promise resolved without a value, or a Promise
+ *                          rejected with an Error.
  */
-const batchResize = (config, photos, thumbnailsDirectory) => {
+const batchResize = (config, inputDir, filenames, thumbnailsDir) => {
   return new Promise((resolve, reject) => {
     const commandArguments = [
       'batch',
       '-'
     ];
     const gm = childProcess.spawn(config.gmPath, commandArguments);
-    gm.on('error', (error) => {
+    gm.once('error', (error) => {
       reject(error);
       gm.kill();
     });
-    gm.on('close', (code) => {
+    gm.once('close', (code) => {
       if (code !== 0) {
         reject(new Error(`GraphicsMagick exit with code ${code}.`));
         return;
       }
       resolve();
     });
-    const batchCommands = photos.map((photo) => {
-      const thumbnailPath = path.join(thumbnailsDirectory, photo.filename);
+    const batchCommands = filenames.map((filename) => {
+      const originalPhotoPath = path.join(inputDir, filename);
+      const thumbnailPath = path.join(thumbnailsDir, filename);
       const command = [
         'convert',
         '-auto-orient',
         '-geometry',
-        '1280x720>',
+        `${config.maxWidth}x${config.maxHeight}`,
         '-strip',
-        photo.path,
+        originalPhotoPath,
         thumbnailPath,
         '\n'
       ].join(' ');
@@ -256,26 +252,26 @@ const batchResize = (config, photos, thumbnailsDirectory) => {
 };
 
 /**
- * Generates a page (HTML document) using the photos.
+ * Generates a page (HTML document).
  *
- * @async
+ * @param {string} template Absolute path of the template file.
+ * @param {string[]} filenames Filenames of the photos.
+ * @param {string[]} modTimes Modification times of the photos.
+ * @param {string} page Absolute path of the generated page.
  *
- * @param {string} template Page template path.
- * @param {Photo[]} photos An array of photo data.
- * @param {string} page Generated path path.
- *
- * @returns {Promise} Resolves without a value, or rejects with an Error object.
+ * @returns {Promise<void>} A Promise resolved without a value, or a Promise
+ *                          rejected with an Error.
  */
-const generatePage = async (template, photos, page) => {
+const generatePage = async (template, filenames, modTimes, page) => {
   try {
     const templateContent = await getFileContent(template);
     const view = {
       currentTimestamp: (new Date()).toISOString(),
-      photos: photos.map((photo) => {
+      photos: filenames.map((filename, index) => {
         return {
-          filename: photo.filename,
-          altText: `Photo captured at ${photo.modTime}.`,
-          timestamp: photo.modTime
+          filename,
+          altText: `Photo captured at ${modTimes[index]}.`,
+          timestamp: modTimes[index]
         };
       })
     };
@@ -288,26 +284,29 @@ const generatePage = async (template, photos, page) => {
 
 const main = async () => {
   if (process.argv.length !== EXPECTED_ARG_LENGTH) {
-    usage();
+    printUsage();
     return;
   }
-  const inputDirectory = process.argv[2];
+  const inputDir = process.argv[2];
   try {
-    const isValidDirectory = await isDirectory(inputDirectory)
+    const isValidDirectory = await isDirectory(inputDir)
     if (!isValidDirectory) {
-      console.error(`${inputDirectory} is not a directory.`);
+      console.error(`${inputDir} is not a directory.`);
       return;
     }
-    const photos = await getPhotos(inputDirectory);
-    const tasks = photos.map((photo) => {
-      return setPhotoModTime(config, photo);
+    const filenames = await getPhotoFilenames(inputDir);
+    const tasks = filenames.map((filename) => {
+      return getModTime(config.gmPath, path.join(inputDir, filename));
     });
-    await Promise.all(tasks);
-    const thumbnailsDirectory = path.join(inputDirectory, 'thumbnails');
-    await createThumbnailsDirectory(thumbnailsDirectory);
-    await batchResize(config, photos, thumbnailsDirectory);
-    const generatedPagePath = path.join(inputDirectory, 'index.html');
-    await generatePage(templatePath, photos, generatedPagePath);
+    const modTimes = [];
+    for await (const modTime of tasks) {
+      modTimes.push(modTime);
+    }
+    const thumbnailsDir = path.join(inputDir, 'thumbnails');
+    await createThumbnailsDirectory(thumbnailsDir);
+    await batchResize(config, inputDir, filenames, thumbnailsDir);
+    const generatedPagePath = path.join(inputDir, 'index.html');
+    await generatePage(TEMPLATE_PATH, filenames, modTimes, generatedPagePath);
   } catch (error) {
     console.error(error.message);
   }

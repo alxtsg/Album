@@ -1,6 +1,6 @@
 {
   "name": "album",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Static album page generation tool.",
   "main": "index.js",
   "dependencies": {

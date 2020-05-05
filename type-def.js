@@ -1,26 +1,16 @@
 /**
  * @typedef {object} Config Program configurations.
- * @property {string} gmPath GraphicsMagick path.
- */
-
-/**
- * @typedef {object} Photo Photo data.
- * @property {string} filename Filename of photo.
- * @property {string} path Absolute path of photo.
- * @property {string} modTime Modification time, in ISO 8601.
+ * @property {string} gmPath GraphicsMagick executable path.
+ * @property {number} maxWidth Maximum width of a thumbnail.
+ * @property {number} maxHeight Maximum height of a thumbnail.
  */
 
 const Config = {
-  gmPath: null
-};
-
-const Photo = {
-  filename: null,
-  path: null,
-  modTime: null
+  gmPath: null,
+  maxWidth: null,
+  maxHeight: null
 };
 
 module.exports = {
-  Config,
-  Photo
+  Config
 };
