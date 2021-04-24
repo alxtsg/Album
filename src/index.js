@@ -9,7 +9,7 @@
 'use strict';
 
 /**
- * @typedef {import('./type-def').Config} Config
+ * @typedef {import('../type-def').Config} Config
  */
 
 const mustache = require('mustache');
