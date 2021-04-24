@@ -1,4 +1,4 @@
-export type AppConfig = {
+export default interface AppConfig {
 
   /**
    * GraphicsMagick executable path.
