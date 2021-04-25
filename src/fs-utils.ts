@@ -21,13 +21,32 @@ export const isDirectory = (directory: string): Promise<boolean> => {
 };
 
 /**
+ * Creates a new directory.
+ *
+ * @param directory Absolute path of the new directory.
+ *
+ * @returns A Promise resolves without a value.
+ */
+export const createDirectory = (directory: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    fs.mkdir(directory, (error) => {
+      if (error !== null) {
+        reject(error);
+        return;
+      }
+      resolve();
+    });
+  });
+};
+
+/**
  * Gets names of files under the given directory.
  *
  * @param directory Directory path.
  *
  * @returns A Promise resolves with an array of filenames.
  */
- export const getPhotoFilenames = (directory: string): Promise<string[]> => {
+ export const getFilenames = (directory: string): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     fs.readdir(directory, (error, filenames) => {
       if (error !== null) {
