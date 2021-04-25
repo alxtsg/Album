@@ -1,6 +1,5 @@
 import assert from 'assert';
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 
 import * as fsUtils from '../fs-utils';
@@ -44,6 +43,6 @@ describe('Filesystem utilities', (): void => {
     await assert.doesNotReject(async (): Promise<void> => {
       await fsUtils.writeFile(tempFile, 'TEST');
     });
-    await fsPromises.rmdir(tempDir, { recursive: true });
+    await fsPromises.unlink(tempFile);
   });
 });
