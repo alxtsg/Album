@@ -14,8 +14,11 @@
     "clean": "rimraf dist/",
     "copy-env": "copyfiles -u 1 src/.env.template dist",
     "copy-package-json": "copyfiles package*.json dist",
-    "build": "tsc && npm run copy-env && npm run copy-package-json",
-    "test": "mocha --recursive tests/**/*.test.js"
+    "copy-test-data": "copyfiles -u 2 src/tests/data/* dist/tests",
+    "build-test": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-test-data",
+    "build-release": "tsc && npm run copy-env && npm run copy-package-json",
+    "pretest": "node tests/setup.js",
+    "test": "mocha --recursive --exclude tests/setup.js tests/**/*.test.js"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
