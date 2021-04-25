@@ -10,13 +10,13 @@ const fsPromises = fs.promises;
 describe('Filesystem utilities', (): void => {
   it('can check directory', async (): Promise<void> => {
     await assert.doesNotReject(async (): Promise<void> => {
-      const isDirectory = await fsUtils.isDirectory(__dirname);
+      const isDirectory: boolean = await fsUtils.isDirectory(__dirname);
       assert.strictEqual(isDirectory, true);
     });
   });
 
   it('can create a directory', async (): Promise<void> => {
-    const tempDir = path.join(__dirname, 'test-directory');
+    const tempDir: string = path.join(__dirname, 'test-directory');
     await assert.doesNotReject(async (): Promise<void> => {
       await fsUtils.createDirectory(tempDir);
     });
@@ -25,7 +25,7 @@ describe('Filesystem utilities', (): void => {
 
   it('can get filenames under a directory', async (): Promise<void> => {
     await assert.doesNotReject(async (): Promise<void> => {
-      const files = await fsUtils.getFilenames(__dirname);
+      const files: string[] = await fsUtils.getFilenames(__dirname);
       assert.strictEqual(Array.isArray(files), true);
       assert.strictEqual((files.length > 0), true);
     });
@@ -33,14 +33,14 @@ describe('Filesystem utilities', (): void => {
 
   it('can get file content', async (): Promise<void> => {
     await assert.doesNotReject(async (): Promise<void> => {
-      const fileContent = await fsUtils.getFileContent(__filename);
+      const fileContent: string = await fsUtils.getFileContent(__filename);
       assert.strictEqual((fileContent.length > 0), true);
     });
   });
 
   it('can write file', async (): Promise<void> => {
-    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
-    const tempFile = path.join(tempDir, 'test.file');
+    const filename: string = `test-${Date.now()}.file`;
+    const tempFile: string = path.join(__dirname, filename);
     await assert.doesNotReject(async (): Promise<void> => {
       await fsUtils.writeFile(tempFile, 'TEST');
     });
