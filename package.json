@@ -14,9 +14,10 @@
     "clean": "rimraf dist/",
     "copy-env": "copyfiles -u 1 src/.env.template dist",
     "copy-package-json": "copyfiles package*.json dist",
+    "copy-template": "copyfiles -u 1 src/template.mustache dist",
     "copy-test-data": "copyfiles -u 2 src/tests/data/* dist/tests",
-    "build-test": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-test-data",
-    "build-release": "tsc && npm run copy-env && npm run copy-package-json",
+    "build-test": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-template && npm run copy-test-data",
+    "build-release": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-template",
     "pretest": "node tests/setup.js",
     "test": "mocha --recursive --exclude tests/setup.js tests/**/*.test.js"
   },
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^8.2.2",
+    "@types/mustache": "^4.1.1",
     "@types/node": "^14.14.41",
     "copyfiles": "^2.4.1",
     "mocha": "^8.3.2",
