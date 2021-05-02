@@ -5,10 +5,10 @@
   "description": "Static album page generation tool.",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/alxtsg/journey.git"
+    "url": "git+ssh://git@bitbucket.org:alxtsg/album.git"
   },
   "license": "BSD-3-Clause",
-  "homepage": "https://bitbucket.org/alxtsg/journey#readme",
+  "homepage": "https://bitbucket.org/alxtsg/album/",
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist/",
@@ -29,7 +29,7 @@
     "@tsconfig/node12": "^1.0.7",
     "@types/mocha": "^8.2.2",
     "@types/mustache": "^4.1.1",
-    "@types/node": "^14.14.41",
+    "@types/node": "^15.0.1",
     "copyfiles": "^2.4.1",
     "mocha": "^8.3.2",
     "rimraf": "^3.0.2",
