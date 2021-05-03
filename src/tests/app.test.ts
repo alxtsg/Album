@@ -11,9 +11,9 @@ const GENERATED_PAGE: string = path.join(INPUT_DIR, 'index.html');
 
 const fsPromises = fs.promises;
 
-describe('Main application', async (): Promise<void> => {
-  it('can generate a page with given the photo directory', async (): Promise<void> => {
-    await assert.doesNotReject(async (): Promise<void> => {
+describe('Main application', async () => {
+  it('can generate a page with given the photo directory', async () => {
+    await assert.doesNotReject(async () => {
       await app.run(INPUT_DIR);
       const isDirectory: boolean = await fsUtils.isDirectory(THUMBNAILS_DIR);
       assert.strictEqual(isDirectory, true);

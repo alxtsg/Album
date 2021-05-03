@@ -10,8 +10,8 @@ const GENERATED_PAGE: string = path.join(__dirname, 'test.html');
 
 const fsPromises = fs.promises;
 
-describe('Page utilities', async (): Promise<void> => {
-  it('can generate a page', async (): Promise<void> => {
+describe('Page utilities', async () => {
+  it('can generate a page', async () => {
     const photos: Photo[] = [
       {
         path: 'thumbnail/01.jpeg',
@@ -29,7 +29,7 @@ describe('Page utilities', async (): Promise<void> => {
         timestamp: '2021-01-01T02:00:00'
       }
     ];
-    await assert.doesNotReject(async (): Promise<void> => {
+    await assert.doesNotReject(async () => {
       await pageUtils.generatePage(photos, GENERATED_PAGE);
       const pageContent: string = await fsUtils.getFileContent(GENERATED_PAGE);
       for (const photo of photos) {

@@ -17,7 +17,7 @@ const WINDOWS_ENV_CONTENT: string = [
 
 const fsPromises = fs.promises;
 
-const main = async (): Promise<void> => {
+const main = async () => {
   let content: string | null = null;
   if (os.platform() === WINDOWS_PLATFORM) {
     content = WINDOWS_ENV_CONTENT;

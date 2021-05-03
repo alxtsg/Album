@@ -11,10 +11,10 @@ const TIMESTAMP_REGEX: RegExp = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})
 
 const fsPromises = fs.promises;
 
-describe('Photo utilities', async (): Promise<void> => {
-  it('can get photo capture timestamp', async (): Promise<void> => {
+describe('Photo utilities', async () => {
+  it('can get photo capture timestamp', async () => {
     const filenames: string[] = await fsUtils.getFilenames(INPUT_DIR);
-    await assert.doesNotReject(async (): Promise<void> => {
+    await assert.doesNotReject(async () => {
       for (const filename of filenames) {
         const photo: string = path.join(INPUT_DIR, filename);
         const timestamp: string = await photoUtils.getCaptureTimestamp(photo);
@@ -23,10 +23,10 @@ describe('Photo utilities', async (): Promise<void> => {
     });
   });
 
-  it('can resize photos', async (): Promise<void> => {
+  it('can resize photos', async () => {
     await fsUtils.createDirectory(OUTPUT_DIR);
     const filenames: string[] = await fsUtils.getFilenames(INPUT_DIR);
-    await assert.doesNotReject(async (): Promise<void> => {
+    await assert.doesNotReject(async () => {
       await photoUtils.resizePhotos(INPUT_DIR, OUTPUT_DIR);
       const resizedPhotos: string[] = await fsUtils.getFilenames(OUTPUT_DIR);
       assert.strictEqual(resizedPhotos.length, filenames.length);

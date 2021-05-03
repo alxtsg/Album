@@ -19,7 +19,7 @@
     "build-test": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-template && npm run copy-test-data",
     "build-release": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-template",
     "pretest": "node tests/setup.js",
-    "test": "mocha --recursive --exclude tests/setup.js tests/**/*.test.js"
+    "test": "mocha --recursive --exclude tests/setup.js \"tests/**/*.test.js\""
   },
   "dependencies": {
     "dotenv": "^8.2.0",
