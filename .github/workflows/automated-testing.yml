@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install graphicsmagick
+        sudo apt install imagemagick
 
     # Build
     - name: Install dependencies (build)

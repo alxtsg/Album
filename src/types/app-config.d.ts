@@ -1,10 +1,4 @@
 export default interface AppConfig {
-
-  /**
-   * GraphicsMagick executable path.
-   */
-  gmPath: string;
-
   /**
    * Maximum width of a resized image.
    */

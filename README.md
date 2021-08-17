@@ -7,21 +7,20 @@ Static album page generation tool.
 ## Requirements ##
 
 * Node.js (`>=12`).
-* GraphicsMagick (`>=1.3.36`).
+* ImageMagick (`6.x`).
 
 ## Installation ##
 
 0. `npm clean-install --production`.
+1. Install ImageMagick. Refer to the
+   [official website](https://legacy.imagemagick.org/script/download.php) to
+   make sure ImageMagick is working properly.
 
 ## Configuration ##
 
-Create a configuration file with the name `.env`. The configuration file
-controls the following:
+Create a configuration file with the name `.env` in the installation directory.
+The configuration file controls the following:
 
-* `GM_PATH`: Path of GraphicsMagick executable file.
-  * If `gm` (for UNIX/ Linux system) or `gm.exe` is in the `PATH` environment
-    variable, it is not necessary to specify the full path, the executable name
-    itself is sufficient.
 * `MAX_WIDTH`: Maximum width (in pixels) of each generated thumbnail.
 * `MAX_HEIGHT`: Maximum height (in pixels) of each generated thumbnail.
 
