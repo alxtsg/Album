@@ -20,7 +20,8 @@ export const run = async (inputDir: string): Promise<void> => {
   for (const filename of filenames) {
     const photoPath: string = path.join(inputDir, filename);
     const timestamp: string = await photoUtils.getCaptureTimestamp(photoPath);
-    const thumbnail: string = `${path.basename(filename)}.${config.thumbnailFormat}`;
+    const basename: string = path.basename(filename, path.extname(filename));
+    const thumbnail: string = `${basename}.${config.thumbnailFormat}`;
     photos.push({
       path: `${THUMBNAILS_DIRECTORY_NAME}/${thumbnail}`,
       altText: `Photo captured at ${timestamp}.`,
