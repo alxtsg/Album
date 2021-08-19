@@ -85,7 +85,7 @@ export const resizePhotos = async (inputDir: string, outputDir: string): Promise
     `${config.maxWidth}x${config.maxHeight}`,
     '-strip',
     '-format',
-    'jpeg',
+    `${config.thumbnailFormat}`,
     '-path',
     outputDir,
     path.join(inputDir, '*'),

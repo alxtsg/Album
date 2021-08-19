@@ -1,5 +1,10 @@
 export default interface AppConfig {
   /**
+   * Thumbnail image format.
+   */
+  thumbnailFormat: 'jpeg';
+
+  /**
    * Maximum width of a resized image.
    */
   maxWidth: number;

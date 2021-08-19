@@ -1,5 +1,6 @@
 import path from 'path';
 
+import config from './config';
 import * as fsUtils from './fs-utils';
 import * as pageUtils from './page-utils';
 import Photo from './types/photo';
@@ -19,8 +20,9 @@ export const run = async (inputDir: string): Promise<void> => {
   for (const filename of filenames) {
     const photoPath: string = path.join(inputDir, filename);
     const timestamp: string = await photoUtils.getCaptureTimestamp(photoPath);
+    const thumbnail: string = `${path.basename(filename)}.${config.thumbnailFormat}`;
     photos.push({
-      path: `${THUMBNAILS_DIRECTORY_NAME}/${filename}`,
+      path: `${THUMBNAILS_DIRECTORY_NAME}/${thumbnail}`,
       altText: `Photo captured at ${timestamp}.`,
       timestamp
     });

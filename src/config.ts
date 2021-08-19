@@ -7,6 +7,7 @@ import AppConfig from './types/app-config';
 const ENV_FILE: string = path.join(__dirname, '.env');
 
 const config: AppConfig = {
+  thumbnailFormat: 'jpeg',
   maxWidth: 0,
   maxHeight: 0,
 };
