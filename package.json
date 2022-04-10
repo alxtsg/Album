@@ -1,15 +1,15 @@
 {
   "name": "album",
   "version": "2.0.2",
-  "author": "alextsang@live.com",
   "description": "Static album page generation tool.",
+  "homepage": "https://bitbucket.org/alxtsg/album/",
+  "license": "BSD-3-Clause",
+  "author": "Alex TSANG <alextsang@live.com>",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@bitbucket.org:alxtsg/album.git"
   },
-  "license": "BSD-3-Clause",
-  "homepage": "https://bitbucket.org/alxtsg/album/",
-  "main": "index.js",
   "scripts": {
     "clean": "rimraf dist/",
     "copy-env": "copyfiles -u 1 src/.env.template dist",
@@ -22,17 +22,17 @@
     "test": "mocha --recursive --exclude tests/setup.js \"tests/**/*.test.js\""
   },
   "dependencies": {
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.0",
     "mustache": "^4.2.0"
   },
   "devDependencies": {
-    "@tsconfig/node12": "^1.0.9",
-    "@types/mocha": "^9.0.0",
+    "@tsconfig/node16": "^1.0.2",
+    "@types/mocha": "^9.1.0",
     "@types/mustache": "^4.1.2",
-    "@types/node": "^16.6.1",
+    "@types/node": "^16.x.x",
     "copyfiles": "^2.4.1",
-    "mocha": "^9.0.3",
+    "mocha": "^9.2.2",
     "rimraf": "^3.0.2",
-    "typescript": "^4.3.5"
+    "typescript": "^4.6.3"
   }
 }
