@@ -6,15 +6,21 @@ Static album page generation tool.
 
 ## Requirements ##
 
-* Node.js (`>=12`).
-* ImageMagick (`6.x`).
+* Node.js (`>=16`).
+* ImageMagick (`7.x`).
 
 ## Installation ##
 
 0. `npm clean-install --production`.
-1. Install ImageMagick. Refer to the
-   [official website](https://legacy.imagemagick.org/script/download.php) to
-   make sure ImageMagick is working properly.
+
+ImageMagick should be installed and `magick` is added to the `PATH` environment
+variable. To validate the installation, run:
+
+```
+magick -version
+```
+
+The version and build information should be printed.
 
 ## Configuration ##
 

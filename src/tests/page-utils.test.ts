@@ -1,14 +1,12 @@
 import assert from 'assert';
-import fs from 'fs';
+import fsPromises from 'fs/promises';
 import path from 'path';
 
-import * as fsUtils from '../fs-utils';
 import * as pageUtils from '../page-utils';
-import Photo from '../types/photo';
 
-const GENERATED_PAGE: string = path.join(__dirname, 'test.html');
+import type Photo from '../types/photo';
 
-const fsPromises = fs.promises;
+const GENERATED_PAGE = path.join(__dirname, 'test.html');
 
 describe('Page utilities', async () => {
   it('can generate a page', async () => {
@@ -31,7 +29,12 @@ describe('Page utilities', async () => {
     ];
     await assert.doesNotReject(async () => {
       await pageUtils.generatePage(photos, GENERATED_PAGE);
-      const pageContent: string = await fsUtils.getFileContent(GENERATED_PAGE);
+      const pageContent = await fsPromises.readFile(
+        GENERATED_PAGE,
+        {
+          encoding: 'utf8'
+        }
+      );
       for (const photo of photos) {
         assert.strictEqual(pageContent.includes(photo.path), true);
         assert.strictEqual(pageContent.includes(photo.altText), true);

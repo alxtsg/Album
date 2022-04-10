@@ -3,11 +3,10 @@ import path from 'path';
 
 import config from './config';
 
-const MAGICK_IDENTIFY: string = 'identify';
-const MAGICK_MOGRIFY: string = 'mogrify';
+const MAGICK = 'magick';
 
-const NORMAL_EXIT_CODE: number = 0;
-const TIMESTAMP_REGEX: RegExp = /(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
+const NORMAL_EXIT_CODE = 0;
+const TIMESTAMP_REGEX = /(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
 const DEFAULT_CAPTURE_TIMESTAMP = '0001-01-01T00:00:00';
 
 /**
@@ -20,13 +19,14 @@ const DEFAULT_CAPTURE_TIMESTAMP = '0001-01-01T00:00:00';
  */
 export const getCaptureTimestamp = (photoPath: string): Promise<string> => {
   const commandArguments: string[] = [
+    'identify',
     '-format',
     "'%[EXIF:DateTimeOriginal]'",
     photoPath
   ];
   return new Promise((resolve, reject) => {
-    const im = childProcess.spawn(MAGICK_IDENTIFY, commandArguments);
-    let output: string = '';
+    const im = childProcess.spawn(MAGICK, commandArguments);
+    let output = '';
     im.stdout.on('data', (data: string) => {
       output += data;
     });
@@ -80,6 +80,7 @@ export const getCaptureTimestamp = (photoPath: string): Promise<string> => {
  */
 export const resizePhotos = async (inputDir: string, outputDir: string): Promise<void> => {
   const commandArgs: string[] = [
+    'mogrify',
     '-auto-orient',
     '-geometry',
     `${config.maxWidth}x${config.maxHeight}`,
@@ -91,7 +92,7 @@ export const resizePhotos = async (inputDir: string, outputDir: string): Promise
     path.join(inputDir, '*'),
   ];
   return new Promise((resolve, reject) => {
-    const im = childProcess.spawn(MAGICK_MOGRIFY, commandArgs);
+    const im = childProcess.spawn(MAGICK, commandArgs);
     im.once('error', (error: Error) => {
       reject(error);
       im.kill();

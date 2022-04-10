@@ -1,9 +1,9 @@
 import mustache from 'mustache';
 
+import fsPromises from 'fs/promises';
 import path from 'path';
 
-import * as fsUtils from './fs-utils';
-import Photo from './types/photo';
+import type Photo from './types/photo';
 
 const TEMPLATE: string = path.join(__dirname, 'template.mustache');
 
@@ -16,11 +16,16 @@ const TEMPLATE: string = path.join(__dirname, 'template.mustache');
  * @returns A Promise resolves without a value.
  */
 export const generatePage = async (photos: Photo[], page: string) => {
-  const templateContent = await fsUtils.getFileContent(TEMPLATE);
+  const templateContent = await fsPromises.readFile(
+    TEMPLATE,
+    {
+      encoding: 'utf8'
+    }
+  );
   const view = {
     currentTimestamp: (new Date()).toISOString(),
     photos
   };
   const pageContent = mustache.render(templateContent, view);
-  await fsUtils.writeFile(page, pageContent);
+  await fsPromises.writeFile(page, pageContent);
 };

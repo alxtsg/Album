@@ -2,9 +2,9 @@ import assert from 'assert';
 
 import config from '../config';
 
-const THUMBNAIL_FORMAT: string = 'jpeg';
-const MAX_WIDTH: number = 100;
-const MAX_HEIGHT: number = 100;
+const THUMBNAIL_FORMAT = 'jpeg';
+const MAX_WIDTH= 100;
+const MAX_HEIGHT = 100;
 
 describe('Configurations module', async () => {
   it('can load configurations', async () => {
