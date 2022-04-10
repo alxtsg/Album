@@ -30,8 +30,8 @@ export const getCaptureTimestamp = (photoPath: string): Promise<string> => {
     im.stdout.on('data', (data: string) => {
       output += data;
     });
-    im.stderr.on('data', (data: string) => {
-      console.error(data);
+    im.stderr.on('data', (data: Buffer) => {
+      console.error(Buffer.from(data).toString('utf8'));
     });
     im.once('error', (error: Error) => {
       reject(error);

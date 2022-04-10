@@ -7,6 +7,7 @@ import * as photoUtils from '../photo-utils';
 const INPUT_DIR = path.join(__dirname, 'data');
 const OUTPUT_DIR = path.join(__dirname, 'test-output');
 const TIMESTAMP_REGEX = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/;
+const TEST_TIMEOUT = 5000;
 
 describe('Photo utilities', async () => {
   it('can get photo capture timestamp', async () => {
@@ -32,5 +33,5 @@ describe('Photo utilities', async () => {
       }
     });
     await fsPromises.rm(OUTPUT_DIR, { recursive: true });
-  });
+  }).timeout(TEST_TIMEOUT);
 });

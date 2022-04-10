@@ -8,6 +8,7 @@ import * as fsUtils from '../fs-utils';
 const INPUT_DIR = path.join(__dirname, 'data');
 const THUMBNAILS_DIR = path.join(INPUT_DIR, 'thumbnails');
 const GENERATED_PAGE = path.join(INPUT_DIR, 'index.html');
+const TEST_TIMEOUT = 5000;
 
 describe('Main application', async () => {
   it('can generate a page with given the photo directory', async () => {
@@ -25,5 +26,5 @@ describe('Main application', async () => {
     });
     await fsPromises.rm(THUMBNAILS_DIR, { recursive: true });
     await fsPromises.unlink(GENERATED_PAGE);
-  });
+  }).timeout(TEST_TIMEOUT);
 });
