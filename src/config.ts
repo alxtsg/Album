@@ -8,6 +8,7 @@ const ENV_FILE = path.join(__dirname, '.env');
 
 const config: AppConfig = {
   thumbnailFormat: 'jpeg',
+  videoFormat: 'mp4',
   maxWidth: 0,
   maxHeight: 0,
 };

@@ -5,6 +5,11 @@ export default interface AppConfig {
   thumbnailFormat: 'jpeg';
 
   /**
+   * Video format.
+   */
+  videoFormat: 'mp4';
+
+  /**
    * Maximum width of a resized image.
    */
   maxWidth: number;
