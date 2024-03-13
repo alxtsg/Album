@@ -30,19 +30,19 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
     filePath,
   ];
   return new Promise((resolve, reject) => {
-    const im = childProcess.spawn(FFPROBE, commandArguments);
+    const ffprobe = childProcess.spawn(FFPROBE, commandArguments);
     let output = '';
-    im.stdout.on('data', (data: string) => {
+    ffprobe.stdout.on('data', (data: string) => {
       output += data;
     });
-    im.stderr.on('data', (data: Buffer) => {
+    ffprobe.stderr.on('data', (data: Buffer) => {
       console.error(Buffer.from(data).toString('utf8'));
     });
-    im.once('error', (error: Error) => {
+    ffprobe.once('error', (error: Error) => {
       reject(error);
       return;
     });
-    im.once('close', (code: number) => {
+    ffprobe.once('close', (code: number) => {
       if (code !== NORMAL_EXIT_CODE) {
         reject(new Error(`ffprobe exited with code ${code} when processing ${filePath}.`));
         return;
