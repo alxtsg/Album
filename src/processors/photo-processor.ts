@@ -83,16 +83,12 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
  */
 const resizePhoto = async (inputPath: string, outputPath: string): Promise<void> => {
   const commandArgs: string[] = [
-    'mogrify',
+    inputPath,
     '-auto-orient',
     '-geometry',
     `${config.maxWidth}x${config.maxHeight}`,
     '-strip',
-    '-format',
-    `${config.thumbnailFormat}`,
-    '-write',
-    outputPath,
-    inputPath,
+    outputPath
   ];
   return new Promise((resolve, reject) => {
     const im = childProcess.spawn(MAGICK, commandArgs);
