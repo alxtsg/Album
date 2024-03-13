@@ -25,8 +25,6 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
     '-print_format',
     'json',
     '-show_format',
-    '-show_entries',
-    "'format_tags=creation_time'" ,
     filePath,
   ];
   return new Promise((resolve, reject) => {
