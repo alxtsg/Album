@@ -21,11 +21,11 @@ const DEFAULT_CAPTURE_TIMESTAMP = '0001-01-01T00:00:00';
 const getCaptureTimestamp = (filePath: string): Promise<string> => {
   const commandArguments: string[] = [
     '-loglevel',
-    '0' ,
+    '0',
     '-print_format',
-    'json' ,
-    '-show_format' ,
-    '-show_entries' ,
+    'json',
+    '-show_format',
+    '-show_entries',
     "'format_tags=creation_time'" ,
     filePath,
   ];
