@@ -11,7 +11,7 @@ const OUTPUT_FILE = path.join(__dirname, '..', 'data', '01.mp4');
 const SRC_PATH = '01.mp4';
 
 describe('Video processor', async () => {
-  it('can process a photo file', async () => {
+  it('can process a video file', async () => {
     await assert.doesNotReject(async () => {
       const view: VideoView = await videoProcessor.process(
         INPUT_FILE,
