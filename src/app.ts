@@ -95,7 +95,7 @@ export const run = async (inputDir: string): Promise<void> => {
           resolve(true);
           return;
         }
-        work.processor.process()
+        work.processor.process(work.inputPath, work.outputPath, work.srcPath)
           .then((view: MediaView) => {
             views.push(view);
           })
