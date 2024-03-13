@@ -100,7 +100,7 @@ export const run = async (inputDir: string): Promise<void> => {
             views.push(view);
           })
           .catch((error: Error) => {
-            console.error(error.message);
+            reject(error);
           })
           .finally(() => {
             emitter.emit('next');
