@@ -123,7 +123,9 @@ export const process = async (inputPath: string, outputPath: string, srcPath: st
   const timestamp = await getCaptureTimestamp(inputPath);
   await resizePhoto(inputPath, outputPath);
   return {
-    path: srcPath,
-    timestamp: timestamp
+    'photo?': {
+      path: srcPath,
+      timestamp: timestamp
+    }
   };
 };

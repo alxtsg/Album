@@ -1,4 +1,4 @@
-export default interface PhotoView {
+interface Photo {
   /**
    * Path of the photo file.
    */
@@ -8,4 +8,8 @@ export default interface PhotoView {
    * Timestamp of when the photo was captured.
    */
   timestamp: string;
+}
+
+export default interface PhotoView {
+  'photo?': Photo;
 }

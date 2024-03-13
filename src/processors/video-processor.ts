@@ -127,8 +127,10 @@ export const process = async (inputPath: string, outputPath: string, srcPath: st
   const timestamp = await getCaptureTimestamp(inputPath);
   await convertVideo(inputPath, outputPath);
   return {
-    width: config.maxWidth,
-    path: srcPath,
-    timestamp: timestamp
+    'video?': {
+      width: config.maxWidth,
+      path: srcPath,
+      timestamp: timestamp
+    }
   };
 };

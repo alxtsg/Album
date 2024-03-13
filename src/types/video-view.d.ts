@@ -1,4 +1,4 @@
-export default interface VideoView {
+interface Video {
   /**
    * The width of the video display area, in CSS pixels.
    */
@@ -13,4 +13,8 @@ export default interface VideoView {
    * Timestamp of when the video was captured.
    */
   timestamp: string;
+}
+
+export default interface VideoView {
+  'video?': Video;
 }
