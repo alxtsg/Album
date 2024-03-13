@@ -81,7 +81,7 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
  *
  * @returns A Promise resolves without a value.
  */
-export const resizePhoto = async (inputPath: string, outputPath: string): Promise<void> => {
+const resizePhoto = async (inputPath: string, outputPath: string): Promise<void> => {
   const commandArgs: string[] = [
     'mogrify',
     '-auto-orient',
