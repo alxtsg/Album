@@ -17,6 +17,7 @@ const PROCESSOR_MAP = new Map<string, typeof photoProcessor | typeof videoProces
   ['.jpeg', photoProcessor],
   ['.jpg', photoProcessor],
   ['.png', photoProcessor],
+  ['.heic', photoProcessor],
   ['.mp4', videoProcessor],
   ['.mov', videoProcessor]
 ]);
