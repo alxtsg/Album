@@ -18,20 +18,27 @@
     </h2>
     <p>{{currentTimestamp}}.</p>
     <p>
-      Unless otherwise specified, the photo timestamps are all in local time.
+      Unless otherwise specified, the timestamps are all in local time.
     </p>
     <p>
       BRIEF_DESCRIPTION
     </p>
-    {{#photos}}
+    {{#mediaFiles}}
     <div>
+    {{#photo?}}
       <img
         src="{{&path}}"
-        alt="{{altText}}" />
+        alt="Photo captured at {{timestamp}}." />
+    {{/photo?}}
+    {{#video?}}
+      <video controls="controls" preload="metadata" width="{{width}}">
+        <source src="{{&path}}" type="video/mp4" />
+      </video>
+    {{/video?}}
       <p>{{timestamp}} at LOCATION.</p>
       <p>DESCRIPTION</p>
     </div>
-    {{/photos}}
+    {{/mediaFiles}}
   </article>
 </body>
 </html>
