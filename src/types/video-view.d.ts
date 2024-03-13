@@ -7,6 +7,11 @@ interface Video {
   width: number;
 
   /**
+   * The height of the video display area, in CSS pixels.
+   */
+  height: number;
+
+  /**
    * Path of the video file.
    */
   path: string;

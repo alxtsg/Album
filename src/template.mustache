@@ -31,7 +31,11 @@
         alt="Photo captured at {{timestamp}}." />
     {{/photo?}}
     {{#video?}}
-      <video controls="controls" preload="metadata" width="{{width}}">
+      <video
+        controls="controls"
+        preload="metadata"
+        width="{{width}}"
+        height="{{height}}">
         <source src="{{&path}}" type="video/mp4" />
       </video>
     {{/video?}}

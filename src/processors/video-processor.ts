@@ -127,6 +127,7 @@ export const process = async (inputPath: string, outputPath: string, srcPath: st
   return {
     'video?': {
       width: config.maxWidth,
+      height: config.maxHeight,
       path: srcPath,
       timestamp: timestamp
     }
