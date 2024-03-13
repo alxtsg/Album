@@ -19,11 +19,11 @@ describe('Page utilities', async () => {
       },
       {
         'video?': {
-          width: 320,
+          width: 1280,
+          height: 720,
           path: '01.mov',
           timestamp: '2021-01-02T02:00:00'
         }
-
       },
       {
         'photo?': {

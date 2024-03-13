@@ -21,6 +21,8 @@ describe('Video processor', async () => {
       assert.strictEqual(Object.hasOwn(view, 'video?'), true);
       assert.strictEqual(Object.hasOwn(view['video?'], 'width'), true);
       assert.strictEqual(view['video?'].width > 0, true);
+      assert.strictEqual(Object.hasOwn(view['video?'], 'height'), true);
+      assert.strictEqual(view['video?'].height > 0, true);
       assert.strictEqual(Object.hasOwn(view['video?'], 'path'), true);
       assert.strictEqual(view['video?'].path, SRC_PATH);
       assert.strictEqual(Object.hasOwn(view['video?'], 'timestamp'), true);
