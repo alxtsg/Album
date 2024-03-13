@@ -29,6 +29,8 @@
       <img
         src="{{&path}}"
         alt="Photo captured at {{timestamp}}." />
+      <p>{{timestamp}} at LOCATION.</p>
+      <p>DESCRIPTION</p>
     {{/photo?}}
     {{#video?}}
       <video
@@ -38,9 +40,9 @@
         height="{{height}}">
         <source src="{{&path}}" type="video/mp4" />
       </video>
-    {{/video?}}
       <p>{{timestamp}} at LOCATION.</p>
       <p>DESCRIPTION</p>
+    {{/video?}}
     </div>
     {{/mediaFiles}}
   </article>
