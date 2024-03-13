@@ -1,3 +1,5 @@
+import MediaView from "./media-view";
+
 interface Video {
   /**
    * The width of the video display area, in CSS pixels.
@@ -15,6 +17,6 @@ interface Video {
   timestamp: string;
 }
 
-export default interface VideoView {
+export default interface VideoView extends MediaView {
   'video?': Video;
 }

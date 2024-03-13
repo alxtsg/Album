@@ -1,3 +1,5 @@
+import type MediaView from "./media-view";
+
 interface Photo {
   /**
    * Path of the photo file.
@@ -10,6 +12,6 @@ interface Photo {
   timestamp: string;
 }
 
-export default interface PhotoView {
+export default interface PhotoView extends MediaView {
   'photo?': Photo;
 }
