@@ -4,7 +4,6 @@ import os from 'node:os';
 import path from 'node:path';
 
 import config from './config';
-import * as fsUtils from './fs-utils';
 import * as pageUtils from './page-utils';
 import * as photoProcessor from './processors/photo-processor';
 import * as videoProcessor from './processors/video-processor';
@@ -40,8 +39,8 @@ const getProcessor = (inputFile: string): null | typeof photoProcessor | typeof 
 };
 
 export const run = async (inputDir: string): Promise<void> => {
-  const isValidDirectory = await fsUtils.isDirectory(inputDir);
-  if (!isValidDirectory) {
+  const stat = await fsPromises.stat(inputDir);
+  if (!stat.isDirectory()) {
     console.error(`${inputDir} is not a directory.`);
     return;
   }
