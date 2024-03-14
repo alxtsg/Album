@@ -24,6 +24,7 @@ describe('Photo processor', async () => {
       assert.strictEqual(Object.hasOwn(view['photo?'], 'timestamp'), true);
       assert.strictEqual(view['photo?'].timestamp.length > 0, true);
     });
+
     await fsPromises.unlink(OUTPUT_FILE);
   });
 });

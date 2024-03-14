@@ -28,6 +28,7 @@ describe('Video processor', async () => {
       assert.strictEqual(Object.hasOwn(view['video?'], 'timestamp'), true);
       assert.strictEqual(view['video?'].timestamp.length > 0, true);
     });
+
     await fsPromises.unlink(OUTPUT_FILE);
   });
 });
