@@ -47,13 +47,13 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
       // YYYY:MM:DD HH:mm:ss, if the format does not match, return the default
       // timestamp.
       if (!TIMESTAMP_REGEX.test(output)) {
-        console.warn(`Unable to extract capture timestamp of ${filePath}.`);
+        console.warn(`Unable to extract capture timestamp of ${filePath}. Use default timestamp.`);
         resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }
       const matchArray: RegExpMatchArray | null = output.match(TIMESTAMP_REGEX);
       if (matchArray === null) {
-        console.warn(`Unable to extract capture timestamp of ${filePath}.`);
+        console.warn(`Unable to extract capture timestamp of ${filePath}. Use default timestamp.`);
         resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }

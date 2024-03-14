@@ -47,24 +47,24 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
       }
       const data = JSON.parse(output);
       if (!Object.hasOwn(data, 'format')) {
-        console.warn(`Unable to extract capture timestamp of ${filePath}.`);
+        console.warn(`Unable to extract capture timestamp of ${filePath}. Use default timestamp.`);
         resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }
       if (!Object.hasOwn(data.format, 'tags')) {
-        console.warn(`Unable to extract capture timestamp of ${filePath}.`);
+        console.warn(`Unable to extract capture timestamp of ${filePath}. Use default timestamp.`);
         resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }
       if (!Object.hasOwn(data.format.tags, 'creation_time')) {
-        console.warn(`Unable to extract capture timestamp of ${filePath}.`);
+        console.warn(`Unable to extract capture timestamp of ${filePath}. Use default timestamp.`);
         resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }
       const date = new Date(data.format.tags.creation_time);
       // The extracted capture timestamp is invalid.
       if (Number.isNaN(date.getFullYear())) {
-        console.warn(`Unable to extract capture timestamp of ${filePath}.`);
+        console.warn(`Unable to extract capture timestamp of ${filePath}. Use default timestamp.`);
         resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }
