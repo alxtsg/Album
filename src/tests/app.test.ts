@@ -13,8 +13,12 @@ describe('Main application', async () => {
   it('can generate a page with given the directory', async () => {
     await assert.doesNotReject(async () => {
       await app.run(INPUT_DIR);
-      const stat = await fsPromises.stat(THUMBNAILS_DIR);
-      assert.strictEqual(stat.isDirectory(), true);
+      const thumbnailsDirStat = await fsPromises.stat(THUMBNAILS_DIR);
+      assert.strictEqual(thumbnailsDirStat.isDirectory(), true);
+      const videoStat = await fsPromises.stat(GENERATED_VIDEO);
+      assert.strictEqual(videoStat.isFile(), true);
+      const pageStat = await fsPromises.stat(GENERATED_PAGE);
+      assert.strictEqual(pageStat.isFile(), true);
       const pageContent = await fsPromises.readFile(
         GENERATED_PAGE,
         {
