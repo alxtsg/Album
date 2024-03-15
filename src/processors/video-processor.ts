@@ -42,7 +42,8 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
     });
     ffprobe.once('close', (code: number) => {
       if (code !== NORMAL_EXIT_CODE) {
-        reject(new Error(`ffprobe exited with code ${code} when processing ${filePath}.`));
+        console.warn(`ffprobe exited with code ${code} when processing ${filePath}. Use default timestamp.`);
+        resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }
       const data = JSON.parse(output);

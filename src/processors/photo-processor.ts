@@ -40,7 +40,8 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
     });
     im.once('close', (code: number) => {
       if (code !== NORMAL_EXIT_CODE) {
-        reject(new Error(`ImageMagick (identify) exited with code ${code} when processing ${filePath}.`));
+        console.warn(`ImageMagick (identify) exited with code ${code} when processing ${filePath}. Use default timestamp.`);
+        resolve(DEFAULT_CAPTURE_TIMESTAMP);
         return;
       }
       // The expected format of extracted photo capture time is
