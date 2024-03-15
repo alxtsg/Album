@@ -1,4 +1,5 @@
 import childProcess from 'node:child_process';
+import path from 'node:path';
 
 import config from '../config';
 
