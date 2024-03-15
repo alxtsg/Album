@@ -10,6 +10,7 @@ import * as videoProcessor from './processors/video-processor';
 
 import type MediaView from './types/media-view';
 import type WorkItem from './types/work-item';
+import type WorkResult from './types/work-result';
 
 const THUMBNAILS_DIRECTORY_NAME = 'thumbnails';
 const GENERATED_PAGE = 'index.html';
@@ -85,7 +86,7 @@ export const run = async (inputDir: string): Promise<void> => {
   });
 
   await fsPromises.mkdir(thumbnailsDir);
-  const views: MediaView[] = [];
+  const workResults: WorkResult[] = [];
   const runners = [];
   for (let i = 0; i < WORK_BATCH_SIZE; i += 1) {
     runners.push(new Promise((resolve, reject) => {
@@ -98,7 +99,10 @@ export const run = async (inputDir: string): Promise<void> => {
         }
         work.processor.process(work.inputPath, work.outputPath, work.srcPath)
           .then((view: MediaView) => {
-            views.push(view);
+            workResults.push({
+              inputPath: work.inputPath,
+              view: view
+            });
           })
           .catch((error: Error) => {
             reject(error);
@@ -111,6 +115,13 @@ export const run = async (inputDir: string): Promise<void> => {
     }));
   }
   await Promise.all(runners);
+
+  const views: MediaView[] = workResults.sort((resultA, resultB) => {
+      return resultA.inputPath.localeCompare(resultB.inputPath);
+    })
+    .map((result) => {
+      return result.view;
+    });
 
   const pagePath = path.join(inputDir, GENERATED_PAGE);
   await pageUtils.generatePage(views, pagePath);
