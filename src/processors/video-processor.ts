@@ -9,6 +9,7 @@ const FFMPEG = 'ffmpeg';
 
 const NORMAL_EXIT_CODE = 0;
 const DEFAULT_CAPTURE_TIMESTAMP = '0001-01-01T00:00:00';
+const SKIPPABLE_FORMATS = ['.mp4'];
 
 /**
  * Gets the capture timestamp of the video. If the capture timestamp cannot be
@@ -98,6 +99,13 @@ const convertVideo = async (inputPath: string, outputPath: string): Promise<void
     outputPath
   ];
   return new Promise((resolve, reject) => {
+    // Some video formats are supported by most browsers and no conversion is
+    // needed.
+    if (SKIPPABLE_FORMATS.includes(path.extname(inputPath).toLowerCase())) {
+      resolve();
+      return;
+    }
+
     const ffmpeg = childProcess.spawn(FFMPEG, commandArgs);
     ffmpeg.once('error', (error: Error) => {
       reject(error);
