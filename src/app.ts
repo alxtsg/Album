@@ -14,78 +14,20 @@ import type WorkResult from './types/work-result';
 
 const THUMBNAILS_DIRECTORY_NAME = 'thumbnails';
 const GENERATED_PAGE = 'index.html';
-const PROCESSOR_MAP = new Map<string, typeof photoProcessor | typeof videoProcessor>([
-  ['.jpeg', photoProcessor],
-  ['.jpg', photoProcessor],
-  ['.png', photoProcessor],
-  ['.heic', photoProcessor],
-  ['.mp4', videoProcessor],
-  ['.mov', videoProcessor]
-]);
+const PHOTO_TYPES = ['.jpeg', '.jpeg', '.png', '.heic'];
+const VIDEO_TYPES = ['.mp4', '.mov'];
 const WORK_BATCH_SIZE = os.cpus().length;
 
 /**
- * Gets a processor for a given file.
+ * Process photos.
  *
- * @param inputFile Path of file to be processed.
+ * Multiple photos may be processed at the same time.
  *
- * @returns The appropriate processor, or null if no processor can be used.
+ * @param queue Work queue.
+ *
+ * @returns A Promise resolves with work results.
  */
-const getProcessor = (inputFile: string): null | typeof photoProcessor | typeof videoProcessor => {
-  const extension = path.extname(inputFile).toLocaleLowerCase();
-  const processor = PROCESSOR_MAP.get(extension);
-  if (processor === undefined) {
-    return null;
-  }
-  return processor;
-};
-
-export const run = async (inputDir: string): Promise<void> => {
-  const stat = await fsPromises.stat(inputDir);
-  if (!stat.isDirectory()) {
-    console.error(`${inputDir} is not a directory.`);
-    return;
-  }
-
-  const thumbnailsDir = path.join(inputDir, THUMBNAILS_DIRECTORY_NAME);
-  const filenames = await fsPromises.readdir(inputDir);
-  const queue: WorkItem[] = [];
-  filenames.forEach(filename => {
-    const absPath = path.join(inputDir, filename);
-    const processor = getProcessor(filename);
-    if (processor === null) {
-      console.warn(`No matching processor for ${absPath}, skipping it.`);
-      return;
-    }
-    if (processor === photoProcessor) {
-      const originalFile = path.basename(filename, path.extname(filename));
-      const outputFile = `${originalFile}.${config.thumbnailFormat}`;
-      const outputPath = path.join(thumbnailsDir, outputFile);
-      queue.push({
-        processor: processor,
-        inputPath: absPath,
-        outputPath: outputPath,
-        srcPath: `${THUMBNAILS_DIRECTORY_NAME}/${outputFile}`
-      });
-      return;
-    }
-    if (processor === videoProcessor) {
-      const originalFile = path.basename(filename, path.extname(filename));
-      const outputFile = `${originalFile}.${config.videoFormat}`;
-      const outputPath = path.join(inputDir, outputFile);
-      queue.push({
-        processor: processor,
-        inputPath: absPath,
-        outputPath: outputPath,
-        srcPath: outputFile
-      });
-      return;
-    }
-    // This should never happen.
-    console.error(`Missing pre-processing step for ${absPath}, skipping it.`);
-  });
-
-  await fsPromises.mkdir(thumbnailsDir);
+const processPhotos = async (queue: WorkItem[]): Promise<WorkResult[]> => {
   const workResults: WorkResult[] = [];
   const runners = [];
   for (let i = 0; i < WORK_BATCH_SIZE; i += 1) {
@@ -97,7 +39,7 @@ export const run = async (inputDir: string): Promise<void> => {
           resolve(true);
           return;
         }
-        work.processor.process(work.inputPath, work.outputPath, work.srcPath)
+        photoProcessor.process(work.inputPath, work.outputPath, work.srcPath)
           .then((view: MediaView) => {
             workResults.push({
               inputPath: work.inputPath,
@@ -115,6 +57,91 @@ export const run = async (inputDir: string): Promise<void> => {
     }));
   }
   await Promise.all(runners);
+  return workResults;
+};
+
+/**
+ * Process videos.
+ *
+ * A video is being processed each time.
+ *
+ * @param queue Work queue.
+ *
+ * @returns A Promise resolves with work results.
+ */
+const processVideos = async (queue: WorkItem[]): Promise<WorkResult[]> => {
+  return new Promise((resolve, reject) => {
+    const workResults: WorkResult[] = [];
+    const emitter = new EventEmitter();
+    emitter.on('next', () => {
+      const work = queue.shift();
+      if (work === undefined) {
+        resolve(workResults);
+        return;
+      }
+      videoProcessor.process(work.inputPath, work.outputPath, work.srcPath)
+        .then((view: MediaView) => {
+          workResults.push({
+            inputPath: work.inputPath,
+            view: view
+          });
+        })
+        .catch((error: Error) => {
+          reject(error);
+        })
+        .finally(() => {
+          emitter.emit('next');
+        });
+    });
+    emitter.emit('next');
+  });
+};
+
+export const run = async (inputDir: string): Promise<void> => {
+  const stat = await fsPromises.stat(inputDir);
+  if (!stat.isDirectory()) {
+    console.error(`${inputDir} is not a directory.`);
+    return;
+  }
+
+  const thumbnailsDir = path.join(inputDir, THUMBNAILS_DIRECTORY_NAME);
+  const filenames = await fsPromises.readdir(inputDir);
+  const photosQueue: WorkItem[] = [];
+  const videosQueue: WorkItem[] = [];
+  filenames.forEach(filename => {
+    const absPath = path.join(inputDir, filename);
+    const originalFile = path.basename(filename, path.extname(filename));
+    const fileExtension = path.extname(filename).toLowerCase();
+
+    if (PHOTO_TYPES.includes(fileExtension)) {
+      const outputFile = `${originalFile}.${config.thumbnailFormat}`;
+      const outputPath = path.join(thumbnailsDir, outputFile);
+      photosQueue.push({
+        inputPath: absPath,
+        outputPath: outputPath,
+        srcPath: `${THUMBNAILS_DIRECTORY_NAME}/${outputFile}`
+      });
+      return;
+    }
+
+    if (VIDEO_TYPES.includes(fileExtension)) {
+      const outputFile = `${originalFile}.${config.videoFormat}`;
+      const outputPath = path.join(inputDir, outputFile);
+      videosQueue.push({
+        inputPath: absPath,
+        outputPath: outputPath,
+        srcPath: outputFile
+      });
+      return;
+    }
+
+    console.warn(`No matching processor for ${absPath}, skipping it.`);
+  });
+
+  await fsPromises.mkdir(thumbnailsDir);
+  const photoWorkResults = await processPhotos(photosQueue);
+  const videoWorkResults = await processVideos(videosQueue);
+  const workResults: WorkResult[] = [...photoWorkResults, ...videoWorkResults];
 
   const views: MediaView[] = workResults.sort((resultA, resultB) => {
       return resultA.inputPath.localeCompare(resultB.inputPath);
