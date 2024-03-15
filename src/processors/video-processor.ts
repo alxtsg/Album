@@ -97,6 +97,8 @@ const convertVideo = async (inputPath: string, outputPath: string): Promise<void
     '-i',
     inputPath,
     '-hide_banner',
+    '-pix_fmt',
+    'yuv420p',
     outputPath
   ];
   return new Promise((resolve, reject) => {
