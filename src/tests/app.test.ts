@@ -6,7 +6,7 @@ import * as app from '../app';
 
 const INPUT_DIR = path.join(__dirname, 'data');
 const THUMBNAILS_DIR = path.join(INPUT_DIR, 'thumbnails');
-const GENERATED_VIDEO = path.join(INPUT_DIR, '01.mp4');
+const GENERATED_VIDEO = path.join(INPUT_DIR, 'video-mov.mp4');
 const GENERATED_PAGE = path.join(INPUT_DIR, 'index.html');
 
 describe('Main application', async () => {

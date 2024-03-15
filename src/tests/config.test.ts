@@ -4,7 +4,7 @@ import config from '../config';
 
 const THUMBNAIL_FORMAT = 'jpeg';
 const VIDEO_FORMAT = 'mp4';
-const MAX_WIDTH= 100;
+const MAX_WIDTH = 100;
 const MAX_HEIGHT = 100;
 
 describe('Configurations module', async () => {
