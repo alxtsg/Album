@@ -14,7 +14,7 @@ import type WorkResult from './types/work-result';
 
 const THUMBNAILS_DIRECTORY_NAME = 'thumbnails';
 const GENERATED_PAGE = 'index.html';
-const PHOTO_TYPES = ['.jpeg', '.jpeg', '.png', '.heic'];
+const PHOTO_TYPES = ['.jpeg', '.jpg', '.png', '.heic'];
 const VIDEO_TYPES = ['.mp4', '.mov'];
 const WORK_BATCH_SIZE = os.cpus().length;
 
