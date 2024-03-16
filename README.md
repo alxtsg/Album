@@ -6,8 +6,9 @@ Static album page generation tool.
 
 ## Requirements ##
 
-* Node.js (`>=18`).
+* Node.js (`>=20`).
 * ImageMagick (`7.x`).
+* FFmpeg (`>=6.1`).
 
 ## Installation ##
 
@@ -18,6 +19,16 @@ variable. To validate the installation, run:
 
 ```
 magick -version
+```
+
+The version and build information should be printed.
+
+FFmpeg should be installed. Both `ffprobe` and `ffmpeg` are added to the `PATH`
+environment variable. To validate the installation, run:
+
+```
+ffprobe -version
+ffmpeg -version
 ```
 
 The version and build information should be printed.
@@ -49,18 +60,20 @@ The following will be created in the specified directory:
 * `index.html`: The generated webpage.
 * `thumbnails`: The directory contains thumbnails of the photos. Each photo is
                 resized if it is larger than the specified size.
+* MP4 files: This tool converts video files to MP4 files. For existing MP4
+             files, no conversion will be performed.
 
 ## Examples ##
 
 Assume there is a directory `/path/to/album-20170101` containing photos in JPEG
-format with EXIF data:
+format with EXIF data and several MOV files:
 
 ```
 node index.js /path/to/album-20170101
 ```
 
-The generated webpage `index.html` and thumbnails directory `thumbnails` can be
-found in the directory.
+The generated webpage `index.html`, thumbnails directory `thumbnails`, and MP4
+files converted from the MOV files can be found in the directory.
 
 ## Build ##
 
