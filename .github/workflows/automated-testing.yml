@@ -18,30 +18,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    # Install required software packages.
-    # Also add the new directory to PATH.
-    # Reference: https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-system-path
     - name: Install dependencies
       run: |
-        # AppImages require FUSE version 2 to run.
-        # Reference: https://github.com/AppImage/AppImageKit/wiki/FUSE
-        # sudo add-apt-repository universe
-        # sudo apt install libfuse2
-        # mkdir -p "$HOME/.local/bin"
-        # curl -O -L 'https://download.imagemagick.org/ImageMagick/download/binaries/magick'
-        # chmod u+x magick
-        # mv magick "$HOME/.local/bin"
-        # echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-        # ImageMagick.
         sudo apt install -y imagemagick
-        # FFmpeg.
         sudo apt install -y ffmpeg
+
     - name: Check dependencies
       run: |
         magick -version
         ffmpeg -version
 
-    # Build
     - name: Install dependencies (build)
       run: npm clean-install
     - name: Clean environment
@@ -49,7 +35,6 @@ jobs:
     - name: Build project for testing
       run: npm run build-test
 
-    # Test
     - name: Install dependencies (test)
       run: npm clean-install
       working-directory: ./dist
@@ -72,20 +57,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    # Install required software packages.
-    # The PATH environment variable is not updated after installing ImageMagick,
-    # so running refreshenv is required. However, due to unknown reasons,
-    # running refreshenv doesn't work as expected (the command is supposed to
-    # run on PowerShell but the refreshenv tries to update the environment
-    # variables for cmd.exe). To workaround the problem, install the Chocolatey
-    # PowerShell profile first.
-    # References: https://docs.chocolatey.org/en-us/troubleshooting#refreshenv-has-no-effect
     - name: Install dependencies
       run: |
-        # Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-        # choco install imagemagick ffmpeg
-        # refreshenv
-        # Write-Output "$env:PATH" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         winget install --source winget --id 'ImageMagick.Q16'
         winget install --source winget --id 'Gyan.FFmpeg'
         Write-Output "$env:PATH" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -95,7 +68,6 @@ jobs:
         magick -version
         ffmpeg -version
 
-    # Build
     - name: Install dependencies (build)
       run: npm clean-install
     - name: Clean environment
@@ -103,7 +75,6 @@ jobs:
     - name: Build project for testing
       run: npm run build-test
 
-    # Test
     - name: Install dependencies (test)
       run: npm clean-install
       working-directory: ./dist
