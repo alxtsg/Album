@@ -8,7 +8,7 @@ Static album page generation tool.
 
 * Node.js (`>=22`).
 * ImageMagick (`7.x`).
-* FFmpeg (`>=7.1`).
+* FFmpeg (`>=8`).
 
 ## Installation ##
 
@@ -35,20 +35,20 @@ The version and build information should be printed.
 
 ## Configuration ##
 
-Create a configuration file with the name `.env` in the installation directory.
-The configuration file controls the following:
+Create a configuration file with the name `.env` in the `src` directory. The
+configuration file controls the following:
 
 * `MAX_WIDTH`: Maximum width (in pixels) of each generated thumbnail.
 * `MAX_HEIGHT`: Maximum height (in pixels) of each generated thumbnail.
 
-An example `.env.template` is provided as a reference.
+An example `src/.env.template` is provided as a reference.
 
 ## Usage ##
 
 Run:
 
 ```
-node index.js <input-dir>
+node src/index.js <input-dir>
 ```
 
 Command arguments:
@@ -69,7 +69,7 @@ Assume there is a directory `/path/to/album-20170101` containing photos in JPEG
 format with EXIF data and several MOV files:
 
 ```
-node index.js /path/to/album-20170101
+node src/index.js /path/to/album-20170101
 ```
 
 The generated webpage `index.html`, thumbnails directory `thumbnails`, and MP4
