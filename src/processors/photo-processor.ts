@@ -85,6 +85,7 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
  */
 const resizePhoto = async (inputPath: string, outputPath: string): Promise<void> => {
   const commandArgs: string[] = [
+    '-hide_banner',
     '-i',
     inputPath,
     '-filter_complex',
