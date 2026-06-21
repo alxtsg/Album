@@ -4,6 +4,7 @@ import config from '#app/src/config.js';
 
 import type PhotoView from '#app/src/types/photo-view.d.ts';
 
+const FFMPEG = 'ffmpeg';
 const MAGICK = 'magick';
 
 const NORMAL_EXIT_CODE = 0;
@@ -84,22 +85,29 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
  */
 const resizePhoto = async (inputPath: string, outputPath: string): Promise<void> => {
   const commandArgs: string[] = [
+    '-i',
     inputPath,
-    '-auto-orient',
-    '-geometry',
-    `${config.maxWidth}x${config.maxHeight}`,
-    '-strip',
+    '-filter_complex',
+    `scale=${config.maxWidth}:${config.maxHeight}:force_original_aspect_ratio=decrease`,
+    '-frames:v',
+    '1',
+    // Better quality.
+    '-qscale:v',
+    '2',
+    // Strip metadata.
+    '-map_metadata',
+    '-1',
     outputPath
   ];
   return new Promise((resolve, reject) => {
-    const im = childProcess.spawn(MAGICK, commandArgs);
-    im.once('error', (error: Error) => {
+    const ffmpeg = childProcess.spawn(FFMPEG, commandArgs);
+    ffmpeg.once('error', (error: Error) => {
       reject(error);
-      im.kill();
+      ffmpeg.kill();
     });
-    im.once('close', (code: number) => {
+    ffmpeg.once('close', (code: number) => {
       if (code !== NORMAL_EXIT_CODE) {
-        reject(new Error(`ImageMagick (mogrify) exit with code ${code} when processing ${inputPath}.`));
+        reject(new Error(`FFmpeg exit with code ${code} when processing ${inputPath}.`));
         return;
       }
       resolve();
