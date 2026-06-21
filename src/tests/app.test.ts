@@ -1,8 +1,8 @@
-import assert from 'assert';
-import fsPromises from 'fs/promises';
-import path from 'path';
+import assert from 'node:assert';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 
-import * as app from '../app';
+import * as app from '#app/src/app.js';
 
 const INPUT_DIR = path.join(__dirname, 'data');
 const THUMBNAILS_DIR = path.join(INPUT_DIR, 'thumbnails');

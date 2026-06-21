@@ -3,14 +3,14 @@ import fsPromises from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 
-import config from './config';
-import * as pageUtils from './page-utils';
-import * as photoProcessor from './processors/photo-processor';
-import * as videoProcessor from './processors/video-processor';
+import config from '#app/src/config.js';
+import * as pageUtils from '#app/src/page-utils.js';
+import * as photoProcessor from '#app/src/processors/photo-processor.js';
+import * as videoProcessor from '#app/src/processors/video-processor.js';
 
-import type MediaView from './types/media-view';
-import type WorkItem from './types/work-item';
-import type WorkResult from './types/work-result';
+import type MediaView from '#app/src/types/media-view.d.ts';
+import type WorkItem from '#app/src//types/work-item.d.ts';
+import type WorkResult from '#app/src/types/work-result.d.ts';
 
 const THUMBNAILS_DIRECTORY_NAME = 'thumbnails';
 const GENERATED_PAGE = 'index.html';

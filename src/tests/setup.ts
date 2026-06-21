@@ -1,5 +1,5 @@
-import fsPromises from 'fs/promises';
-import path from 'path';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 
 const ENV_FILE = path.join(__dirname, '..', '.env');
 const ENV_CONTENT = [

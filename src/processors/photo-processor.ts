@@ -1,8 +1,8 @@
 import childProcess from 'node:child_process';
 
-import config from '../config';
+import config from '#app/src/config.js';
 
-import type PhotoView from '../types/photo-view';
+import type PhotoView from '#app/src/types/photo-view.d.ts';
 
 const MAGICK = 'magick';
 

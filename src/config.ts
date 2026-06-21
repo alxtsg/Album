@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 
-import path from 'path';
+import path from 'node:path';
 
-import type AppConfig from './types/app-config';
+import type AppConfig from '#app/src/types/app-config.d.ts';
 
 const ENV_FILE = path.join(__dirname, '.env');
 

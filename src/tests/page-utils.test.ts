@@ -1,10 +1,10 @@
-import assert from 'assert';
-import fsPromises from 'fs/promises';
-import path from 'path';
+import assert from 'node:assert';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 
-import * as pageUtils from '../page-utils';
+import * as pageUtils from '#app/src/page-utils.js';
 
-import type MediaView from '../types/media-view';
+import type MediaView from '#app/src/types/media-view.d.ts';
 
 const GENERATED_PAGE = path.join(__dirname, 'test.html');
 

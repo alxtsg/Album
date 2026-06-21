@@ -1,4 +1,4 @@
-import type MediaView from "./media-view";
+import type MediaView from '#app/src/types/media-view.d.ts';
 
 interface Photo {
   /**

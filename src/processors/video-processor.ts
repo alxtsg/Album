@@ -1,9 +1,9 @@
 import childProcess from 'node:child_process';
 import path from 'node:path';
 
-import config from '../config';
+import config from '#app/src/config.js';
 
-import type VideoView from '../types/video-view';
+import type VideoView from '#app/src/types/video-view.d.ts';
 
 const FFPROBE = 'ffprobe';
 const FFMPEG = 'ffmpeg';

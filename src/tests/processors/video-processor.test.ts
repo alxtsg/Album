@@ -1,10 +1,10 @@
-import assert from 'assert';
-import fsPromises from 'fs/promises';
-import path from 'path';
+import assert from 'node:assert';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 
-import * as videoProcessor from '../../processors/video-processor';
+import * as videoProcessor from '#app/src/processors/video-processor.js';
 
-import type VideoView from '../../types/video-view';
+import type VideoView from '#app/src/types/video-view.d.ts';
 
 const INPUT_MOV_FILE = path.join(__dirname, '..', 'data', 'video-mov.mov');
 const INPUT_MP4_FILE = path.join(__dirname, '..', 'data', 'video-mp4.mp4');

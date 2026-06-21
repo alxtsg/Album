@@ -1,6 +1,6 @@
-import assert from 'assert';
+import assert from 'node:assert';
 
-import config from '../config';
+import config from '#app/src/config.js';
 
 const THUMBNAIL_FORMAT = 'jpeg';
 const VIDEO_FORMAT = 'mp4';

@@ -1,10 +1,10 @@
-import assert from 'assert';
-import fsPromises from 'fs/promises';
-import path from 'path';
+import assert from 'node:assert';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 
-import * as photoProcessor from '../../processors/photo-processor';
+import * as photoProcessor from '#app/src/processors/photo-processor.js';
 
-import type PhotoView from '../../types/photo-view';
+import type PhotoView from '#app/src/types/photo-view.d.ts';
 
 const INPUT_FILE = path.join(__dirname, '..', 'data', '01.jpeg');
 const OUTPUT_FILE = path.join(__dirname, '..', 'data', '01-processed.jpeg');

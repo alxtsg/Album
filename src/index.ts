@@ -1,4 +1,4 @@
-import * as app from './app';
+import * as app from '#app/src/app.js';
 
 const EXPECTED_ARGS_LENGTH: number = 3;
 

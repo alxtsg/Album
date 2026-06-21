@@ -1,9 +1,9 @@
 import mustache from 'mustache';
 
-import fsPromises from 'fs/promises';
-import path from 'path';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
 
-import type MediaView from './types/media-view';
+import type MediaView from '#app/src/types/media-view.d.ts';
 
 const TEMPLATE: string = path.join(__dirname, 'template.mustache');
 
