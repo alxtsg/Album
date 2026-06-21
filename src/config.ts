@@ -15,7 +15,8 @@ const config: AppConfig = {
 
 const loadConfig = (): void => {
   const result = dotenv.config({
-    path: ENV_FILE
+    path: ENV_FILE,
+    quiet: true
   });
   if (result.error !== undefined) {
     throw new Error(`Unable to read .env: ${result.error.message}`);
