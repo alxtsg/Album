@@ -4,7 +4,7 @@ on: push
 
 jobs:
   test-linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     strategy:
       matrix:
@@ -25,13 +25,15 @@ jobs:
       run: |
         # AppImages require FUSE version 2 to run.
         # Reference: https://github.com/AppImage/AppImageKit/wiki/FUSE
-        sudo add-apt-repository universe
-        sudo apt install libfuse2
-        mkdir -p "$HOME/.local/bin"
-        curl -O -L 'https://download.imagemagick.org/ImageMagick/download/binaries/magick'
-        chmod u+x magick
-        mv magick "$HOME/.local/bin"
-        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        # sudo add-apt-repository universe
+        # sudo apt install libfuse2
+        # mkdir -p "$HOME/.local/bin"
+        # curl -O -L 'https://download.imagemagick.org/ImageMagick/download/binaries/magick'
+        # chmod u+x magick
+        # mv magick "$HOME/.local/bin"
+        # echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        # ImageMagick.
+        sudo apt install -y imagemagick
         # FFmpeg.
         sudo apt install -y ffmpeg
     - name: Check dependencies
