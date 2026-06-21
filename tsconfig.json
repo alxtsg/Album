@@ -1,8 +1,10 @@
 {
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "target": "ES2022"
+    "rootDir": ".",
+    "outDir": "dist",
+    "target": "es2025",
+    "types": ["@types/mocha", "@types/mustache", "@types/node"]
   },
   "include": [
     "src/**/*"
