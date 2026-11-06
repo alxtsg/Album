@@ -1,6 +1,6 @@
 {
   "name": "album",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Static album page generation tool.",
   "homepage": "https://bitbucket.org/alxtsg/album/",
   "license": "BSD-3-Clause",

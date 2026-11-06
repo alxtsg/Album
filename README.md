@@ -6,9 +6,9 @@ Static album page generation tool.
 
 ## Requirements ##
 
-* Node.js (`>=22`).
+* Node.js (`>=24`).
 * ImageMagick (`7.x`).
-* FFmpeg (`>=8`).
+* FFmpeg (`>=9`).
 
 ## Installation ##
 
