@@ -90,8 +90,8 @@ const getCaptureTimestamp = (filePath: string): Promise<string> => {
  * Several options are added to ensure the encoded video can be played on
  * Safari (macOS and iOS):
  *
- * -pix_fmt yuv420p - The pixel format.
- * -filter:v fps=60 - Set the frame rate to 60 FPS. On iPhone 16 Pro, it is
+ * * -pix_fmt yuv420p - The pixel format.
+ * * -filter:v fps=60 - Set the frame rate to 60 FPS. On iPhone 16 Pro, it is
  *                    possible to record a 4K video at 120 FPS, however it seems
  *                    that Safari (at least on iOS 18.2) doesn't support such
  *                    high frame rate.
