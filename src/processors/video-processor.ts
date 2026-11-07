@@ -3,6 +3,8 @@ import path from 'node:path';
 
 import config from '#app/src/config.js';
 
+import type { SpawnOptions } from 'node:child_process';
+
 import type VideoView from '#app/src/types/video-view.d.ts';
 
 const FFPROBE = 'ffprobe';
@@ -120,7 +122,21 @@ const convertVideo = async (inputPath: string, outputPath: string): Promise<void
       return;
     }
 
-    const ffmpeg = childProcess.spawn(FFMPEG, commandArgs);
+    // Ignore the stdin, stdout, and stderr pipes as no data is written or read
+    // from them. As noted in the Node.js documentation:
+    //
+    // https://nodejs.org/docs/latest-v24.x/api/child_process.html#child-process
+    //
+    // If the subprocess writes to stdout in excess of that limit without the
+    // output being captured, the subprocess blocks, waiting for the pipe buffer
+    // to accept more data.
+    //
+    // When processing a huge video file, the amount of unread output from
+    // FFmpeg can block the subprocess.
+    const options: SpawnOptions = {
+      stdio: 'ignore'
+    };
+    const ffmpeg = childProcess.spawn(FFMPEG, commandArgs, options);
     ffmpeg.once('error', (error: Error) => {
       reject(error);
       ffmpeg.kill();
