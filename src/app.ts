@@ -16,7 +16,7 @@ const THUMBNAILS_DIRECTORY_NAME = 'thumbnails';
 const GENERATED_PAGE = 'index.html';
 const PHOTO_TYPES = ['.jpeg', '.jpg', '.png', '.heic'];
 const VIDEO_TYPES = ['.mp4', '.mov'];
-const WORK_BATCH_SIZE = os.cpus().length;
+const WORK_BATCH_SIZE = os.availableParallelism();
 
 /**
  * Process photos.
