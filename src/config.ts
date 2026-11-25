@@ -1,6 +1,5 @@
-import dotenv from 'dotenv';
-
 import path from 'node:path';
+import process from 'node:process';
 
 import type AppConfig from '#app/src/types/app-config.d.ts';
 
@@ -14,25 +13,21 @@ const config: AppConfig = {
 };
 
 const loadConfig = (): void => {
-  const result = dotenv.config({
-    path: ENV_FILE,
-    quiet: true
-  });
-  if (result.error !== undefined) {
-    throw new Error(`Unable to read .env: ${result.error.message}`);
+  try {
+    process.loadEnvFile(ENV_FILE);
+  } catch (error) {
+    throw new Error(`Unable to read .env: ${(error as Error).message}`);
   }
-  if (result.parsed === undefined) {
-    throw new Error('No parsed configurations.');
-  }
-  const envConfig = result.parsed;
-  if (!Number.isInteger(Number(envConfig.MAX_WIDTH))) {
+
+  if (!Number.isInteger(Number(process.env.MAX_WIDTH))) {
     throw new Error('Invalid maximum width value.');
   }
-  if (!Number.isInteger(Number(envConfig.MAX_HEIGHT))) {
+  config.maxWidth = Number(process.env.MAX_WIDTH);
+
+  if (!Number.isInteger(Number(process.env.MAX_HEIGHT))) {
     throw new Error('Invalid maximum height value.');
   }
-  config.maxWidth = Number(envConfig.MAX_WIDTH);
-  config.maxHeight = Number(envConfig.MAX_HEIGHT);
+  config.maxHeight = Number(process.env.MAX_HEIGHT);
 };
 
 loadConfig();

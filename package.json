@@ -21,7 +21,6 @@
     "test": "node src/tests/setup.js && node --test"
   },
   "dependencies": {
-    "dotenv": "18.0.9",
     "mustache": "4.2.0"
   },
   "devDependencies": {
