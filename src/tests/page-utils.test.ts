@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import fsPromises from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { suite, test } from 'node:test';
 
@@ -7,10 +8,13 @@ import * as pageUtils from '#app/src/page-utils.js';
 
 import type MediaView from '#app/src/types/media-view.d.ts';
 
-const GENERATED_PAGE = path.join(__dirname, 'test.html');
+const GENERATED_PAGE_NAME = 'test.html';
 
 suite('Page utilities', async () => {
   test('can generate a page', async () => {
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const generatedPage = path.join(tempDir, GENERATED_PAGE_NAME);
+
     const mediaViews: MediaView[] = [
       {
         'photo?': {
@@ -34,9 +38,9 @@ suite('Page utilities', async () => {
       }
     ];
     await assert.doesNotReject(async () => {
-      await pageUtils.generatePage(mediaViews, GENERATED_PAGE);
+      await pageUtils.generatePage(mediaViews, generatedPage);
     });
 
-    await fsPromises.unlink(GENERATED_PAGE);
+    await fsPromises.rm(tempDir, { recursive: true });
   });
 });

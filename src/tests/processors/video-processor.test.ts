@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import fsPromises from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { suite, test } from 'node:test';
 
@@ -7,19 +8,24 @@ import * as videoProcessor from '#app/src/processors/video-processor.js';
 
 import type VideoView from '#app/src/types/video-view.d.ts';
 
-const INPUT_MOV_FILE = path.join(__dirname, '..', 'data', 'video-mov.mov');
-const INPUT_MP4_FILE = path.join(__dirname, '..', 'data', 'video-mp4.mp4');
-const OUTPUT_MOV_FILE = path.join(__dirname, '..', 'data', 'video-mov.mp4');
-const OUTPUT_MP4_FILE = path.join(__dirname, '..', 'data', 'video-mp4.mp4');
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const INPUT_MOV_FILE_NAME = 'video-mov.mov';
+const INPUT_MP4_FILE_NAME = 'video-mp4.mp4';
+const OUTPUT_MOV_FILE_NAME = 'video-mov.mp4';
+const OUTPUT_MP4_FILE_NAME = 'video-mp4.mp4';
 const SRC_MOV_PATH = 'video-mov.mp4';
 const SRC_MP4_PATH = 'video-mp4.mp4';
 
 suite('Video processor', async () => {
   test('can process a video file', async () => {
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const inputFile = path.join(tempDir, INPUT_MOV_FILE_NAME);
+    fsPromises.copyFile(path.join(DATA_DIR, INPUT_MOV_FILE_NAME), inputFile);
+
     await assert.doesNotReject(async () => {
       const view: VideoView = await videoProcessor.process(
-        INPUT_MOV_FILE,
-        OUTPUT_MOV_FILE,
+        inputFile,
+        path.join(tempDir, OUTPUT_MOV_FILE_NAME),
         SRC_MOV_PATH
       );
       assert.strictEqual(Object.hasOwn(view, 'video?'), true);
@@ -33,14 +39,18 @@ suite('Video processor', async () => {
       assert.strictEqual(view['video?'].timestamp.length > 0, true);
     });
 
-    await fsPromises.unlink(OUTPUT_MOV_FILE);
+    await fsPromises.rm(tempDir, { recursive: true });
   });
 
   test('can skip video formats which does not require conversion', async () => {
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const inputFile = path.join(tempDir, INPUT_MP4_FILE_NAME);
+    fsPromises.copyFile(path.join(DATA_DIR, INPUT_MP4_FILE_NAME), inputFile);
+
     await assert.doesNotReject(async () => {
       const view: VideoView = await videoProcessor.process(
-        INPUT_MP4_FILE,
-        OUTPUT_MP4_FILE,
+        inputFile,
+        path.join(tempDir, OUTPUT_MP4_FILE_NAME),
         SRC_MP4_PATH
       );
       assert.strictEqual(Object.hasOwn(view, 'video?'), true);
@@ -54,6 +64,6 @@ suite('Video processor', async () => {
       assert.strictEqual(view['video?'].timestamp.length > 0, true);
     });
 
-    // No cleanup is needed.
+    await fsPromises.rm(tempDir, { recursive: true });
   });
 });

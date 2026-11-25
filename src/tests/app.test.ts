@@ -1,27 +1,36 @@
 import assert from 'node:assert';
 import fsPromises from 'node:fs/promises';
+import os from 'node:os';
 import path from 'node:path';
 import { suite, test } from 'node:test';
 
 import * as app from '#app/src/app.js';
 
-const INPUT_DIR = path.join(__dirname, 'data');
-const THUMBNAILS_DIR = path.join(INPUT_DIR, 'thumbnails');
-const GENERATED_VIDEO = path.join(INPUT_DIR, 'video-mov.mp4');
-const GENERATED_PAGE = path.join(INPUT_DIR, 'index.html');
+const DATA_DIR = path.join(__dirname, 'data');
+const THUMBNAILS_DIR_NAME = 'thumbnails';
+const GENERATED_VIDEO_NAME = 'video-mov.mp4';
+const GENERATED_PAGE_NAME = 'index.html';
 
 suite('Main application', async () => {
   test('can generate a page with given the directory', async () => {
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    await fsPromises.cp(DATA_DIR, tempDir, { recursive: true });
+
     await assert.doesNotReject(async () => {
-      await app.run(INPUT_DIR);
-      const thumbnailsDirStat = await fsPromises.stat(THUMBNAILS_DIR);
+      await app.run(tempDir);
+
+      const thumbnailsDir = path.join(tempDir, THUMBNAILS_DIR_NAME);
+      const generatedVideo = path.join(tempDir, GENERATED_VIDEO_NAME);
+      const generatePage = path.join(tempDir, GENERATED_PAGE_NAME);
+
+      const thumbnailsDirStat = await fsPromises.stat(thumbnailsDir);
       assert.strictEqual(thumbnailsDirStat.isDirectory(), true);
-      const videoStat = await fsPromises.stat(GENERATED_VIDEO);
+      const videoStat = await fsPromises.stat(generatedVideo);
       assert.strictEqual(videoStat.isFile(), true);
-      const pageStat = await fsPromises.stat(GENERATED_PAGE);
+      const pageStat = await fsPromises.stat(generatePage);
       assert.strictEqual(pageStat.isFile(), true);
       const pageContent = await fsPromises.readFile(
-        GENERATED_PAGE,
+        generatePage,
         {
           encoding: 'utf8'
         }
@@ -29,8 +38,6 @@ suite('Main application', async () => {
       assert.strictEqual((pageContent.length > 0), true);
     });
 
-    await fsPromises.rm(THUMBNAILS_DIR, { recursive: true });
-    await fsPromises.unlink(GENERATED_VIDEO);
-    await fsPromises.unlink(GENERATED_PAGE);
+    await fsPromises.rm(tempDir, { recursive: true });
   });
 });
