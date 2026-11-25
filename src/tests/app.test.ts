@@ -13,7 +13,7 @@ const GENERATED_PAGE_NAME = 'index.html';
 
 suite('Main application', async () => {
   test('can generate a page with given the directory', async () => {
-    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir() + path.sep);
     await fsPromises.cp(DATA_DIR, tempDir, { recursive: true });
 
     await assert.doesNotReject(async () => {

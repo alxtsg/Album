@@ -15,7 +15,7 @@ const SRC_PATH = '01-processed.jpeg';
 
 suite('Photo processor', async () => {
   test('can process a photo file', async () => {
-    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir() + path.sep);
     const inputFile = path.join(tempDir, INPUT_FILE_NAME);
     fsPromises.copyFile(path.join(DATA_DIR, INPUT_FILE_NAME), inputFile);
 

@@ -18,7 +18,7 @@ const SRC_MP4_PATH = 'video-mp4.mp4';
 
 suite('Video processor', async () => {
   test('can process a video file', async () => {
-    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir() + path.sep);
     const inputFile = path.join(tempDir, INPUT_MOV_FILE_NAME);
     fsPromises.copyFile(path.join(DATA_DIR, INPUT_MOV_FILE_NAME), inputFile);
 
@@ -43,7 +43,7 @@ suite('Video processor', async () => {
   });
 
   test('can skip video formats which does not require conversion', async () => {
-    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir() + path.sep);
     const inputFile = path.join(tempDir, INPUT_MP4_FILE_NAME);
     fsPromises.copyFile(path.join(DATA_DIR, INPUT_MP4_FILE_NAME), inputFile);
 

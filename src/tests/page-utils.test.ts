@@ -12,7 +12,7 @@ const GENERATED_PAGE_NAME = 'test.html';
 
 suite('Page utilities', async () => {
   test('can generate a page', async () => {
-    const tempDir = await fsPromises.mkdtemp(os.tmpdir());
+    const tempDir = await fsPromises.mkdtemp(os.tmpdir() + path.sep);
     const generatedPage = path.join(tempDir, GENERATED_PAGE_NAME);
 
     const mediaViews: MediaView[] = [
