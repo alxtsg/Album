@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+import { suite, test } from 'node:test';
 
 import * as app from '#app/src/app.js';
 
@@ -9,8 +10,8 @@ const THUMBNAILS_DIR = path.join(INPUT_DIR, 'thumbnails');
 const GENERATED_VIDEO = path.join(INPUT_DIR, 'video-mov.mp4');
 const GENERATED_PAGE = path.join(INPUT_DIR, 'index.html');
 
-describe('Main application', async () => {
-  it('can generate a page with given the directory', async () => {
+suite('Main application', async () => {
+  test('can generate a page with given the directory', async () => {
     await assert.doesNotReject(async () => {
       await app.run(INPUT_DIR);
       const thumbnailsDirStat = await fsPromises.stat(THUMBNAILS_DIR);

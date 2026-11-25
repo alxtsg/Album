@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+import { suite, test } from 'node:test';
 
 import * as videoProcessor from '#app/src/processors/video-processor.js';
 
@@ -13,8 +14,8 @@ const OUTPUT_MP4_FILE = path.join(__dirname, '..', 'data', 'video-mp4.mp4');
 const SRC_MOV_PATH = 'video-mov.mp4';
 const SRC_MP4_PATH = 'video-mp4.mp4';
 
-describe('Video processor', async () => {
-  it('can process a video file', async () => {
+suite('Video processor', async () => {
+  test('can process a video file', async () => {
     await assert.doesNotReject(async () => {
       const view: VideoView = await videoProcessor.process(
         INPUT_MOV_FILE,
@@ -35,7 +36,7 @@ describe('Video processor', async () => {
     await fsPromises.unlink(OUTPUT_MOV_FILE);
   });
 
-  it('can skip video formats which does not require conversion', async () => {
+  test('can skip video formats which does not require conversion', async () => {
     await assert.doesNotReject(async () => {
       const view: VideoView = await videoProcessor.process(
         INPUT_MP4_FILE,

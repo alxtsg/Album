@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+import { suite, test } from 'node:test';
 
 import * as pageUtils from '#app/src/page-utils.js';
 
@@ -8,8 +9,8 @@ import type MediaView from '#app/src/types/media-view.d.ts';
 
 const GENERATED_PAGE = path.join(__dirname, 'test.html');
 
-describe('Page utilities', async () => {
-  it('can generate a page', async () => {
+suite('Page utilities', async () => {
+  test('can generate a page', async () => {
     const mediaViews: MediaView[] = [
       {
         'photo?': {
