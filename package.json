@@ -12,10 +12,10 @@
   },
   "scripts": {
     "clean": "rimraf dist/",
-    "copy-env": "copyfiles --flat src/.env.template dist",
-    "copy-package-json": "copyfiles \"package*.json\" dist",
-    "copy-template": "copyfiles src/template.mustache dist",
-    "copy-test-data": "copyfiles \"src/tests/data/*\" dist",
+    "copy-env": "cpy --flat src/.env.template dist",
+    "copy-package-json": "cpy \"package*.json\" dist",
+    "copy-template": "cpy src/template.mustache dist",
+    "copy-test-data": "cpy \"src/tests/data\" dist",
     "build-test": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-template && npm run copy-test-data",
     "build-release": "tsc && npm run copy-env && npm run copy-package-json && npm run copy-template",
     "test": "node src/tests/setup.js && node --test"
@@ -28,7 +28,7 @@
     "@tsconfig/node24": "24.0.6",
     "@types/mustache": "4.2.6",
     "@types/node": "24.19.2",
-    "copyfiles": "2.4.1",
+    "cpy-cli": "7.0.0",
     "rimraf": "6.1.4",
     "typescript": "7.0.2"
   },
